@@ -130,7 +130,7 @@ void aes_key_schedule(int n, uint8_t* key, int r)
 			subword(tempword);
 			add3word(key + 4*i - 4*n, tempword, rcon, key + 4*i);
 		}
-		else if(i % n == 4)
+		else if(i % n == 4 && n > 6)
 		{
 			cpword(key + 4*i - 4,tempword);
 			subword(tempword);
