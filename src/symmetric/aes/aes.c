@@ -64,45 +64,39 @@ r = 15 for AES-256
 
 w[0],...,w[4r-1] are 32 bit words of the expanded key.
 */
-void aes_key_schedule(int n, uint8_t** k, int r, uint8_t** w)
+void aes_key_schedule(int n, uint8_t* key, int r)
 {
 	uint8_t tempword[4];
 	uint8_t rcon[4] = { 0 };
-
-	for(int i = 0; i < n; i++)
-	{
-		cpword(k + i,w + i);
-	}
 
 	for(int i = n; i < 4 * r; i++)
 	{
 		if(i % n == 0)
 		{
 			rcon[0] = rc[i / n - 1];
-			cpword(w+i-1,tempword);
+			cpword(key + 4*i - 4,tempword);
 			rotword(tempword);
 			subword(tempword);
-			add3word(w+i-n,tempword,rcon,w+i);
+			add3word(key + 4*i - 4*n, tempword, rcon, key + 4*i);
 		}
 		else if(i % n == 4)
 		{
-			cpword(w+i-1,tempword);
+			cpword(key + 4*i - 4,tempword);
 			subword(tempword);
-			addword(w+i-n,tempword,w+i);
+			addword(key + 4*i - 4*n, tempword, key + 4*i);
 		}
 		else
 		{
-			addword(w+i-n,w+i-1,w+i);
+			addword(key + 4*i - 4*n, key + 4*i - 4, key + 4*i);
 		}
 	}
 }
 
 int main()
 {
-	uint8_t key[4][4] = { 0 };
-	uint8_t expanded_key[120][4] = { 0 };
+	uint8_t key[480] = { 0 };
 
-	aes_key_schedule(4,key,11,expanded_key);
+	aes_key_schedule(4,key,11);
 
 	return 0;
 }
