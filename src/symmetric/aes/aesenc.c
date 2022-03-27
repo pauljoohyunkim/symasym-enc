@@ -1,13 +1,80 @@
+#include <stdio.h>
 #include <stdint.h>
+#include <unistd.h>
+#include <stdbool.h>
 #include "aes.h"
 
-int main()
+int main(int argc, char** argv)
 {
-	uint8_t key[480] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f };
-
-	uint8_t buffer[16] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff };
+	int opt;
 
 
-	aes(key,buffer,8,15,14);
+	// Options
+	/*
+
+	Mandatory options are starred.
+	t: AES type*
+	i: Input*
+	k: Key file*
+	b: Block mode*
+	o: Output file
+	h: Help
+	s: Silent
+	f: File integrity check skip
+	*/
+	bool optT = false, optI = false, optK = false, optB = false, optO = false, optH = false, optS = false, optF = false;
+	while((opt = getopt(argc, argv, ":t:i:k:b:o:hsf")) != -1)
+	{
+		switch(opt)
+		{
+			case 't':
+				optT = true;
+
+				break;
+			case 'i':
+				optI = true;
+
+				break;
+			case 'k':
+				optK = true;
+			
+
+				break;
+			case 'b':
+				optB = true;
+
+
+				break;
+			case 'o':
+				optO = true;
+
+
+
+				break;
+			case 'h':
+				optH = true;
+
+
+
+				break;
+			case 's':
+				optS = true;
+
+
+				break;
+			case 'f':
+				optF = true;
+
+
+
+				break;
+			case ':':
+
+
+			case '?':
+
+		}
+	}
+	
 	return 0;
 }
