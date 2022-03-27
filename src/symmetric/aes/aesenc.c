@@ -39,6 +39,7 @@ int main(int argc, char** argv)
 	b: Block mode*
 	o: Output file
 	h: Help
+	s: Password check skip
 	f: File integrity check skip
 	*/
 
@@ -47,8 +48,8 @@ int main(int argc, char** argv)
 	char* outputFileName;
 	unsigned int bcm;		//Block cipher mode of operation. (ecb = 1, cbc = 2, ctr = 3)
 
-	bool optT = false, optI = false, optK = false, optB = false, optO = false, optH = false, optF = false;
-	while((opt = getopt(argc, argv, ":t:i:k:b:o:hf")) != -1)
+	bool optT = false, optI = false, optK = false, optB = false, optO = false, optH = false, optS = false , optF = false;
+	while((opt = getopt(argc, argv, ":t:i:k:b:o:hsf")) != -1)
 	{
 		switch(opt)
 		{
@@ -130,6 +131,11 @@ int main(int argc, char** argv)
 				printf("[INFO] Showing help...\n\n");
 				showHelp();
 				return 0;
+			case 's':
+				optS = true;
+
+				printf("[INFO] Password check will be skipped during decryption.\n");
+				return 0;
 			case 'f':
 				optF = true;
 				printf("[INFO] File integrity hash will not be included.\n");
@@ -182,7 +188,23 @@ int main(int argc, char** argv)
 	}	
 	fclose(keyFile);
 	
+	// Input file opening
+	if((inputFile = fopen(inputFileName, "rb")) == NULL)
+	{
+		printf("[ERROR] Input file could not be opened.\n");
+		return 1;
+	}
 
+	// Output file opening
+	if((outputFile = fopen(outputFileName, "rb")) == NULL)
+	{
+		printf("[ERROR] Output file could not be opened.\n");
+		
+		fclose(inputFile);		// If it reached this point, currently the inputfile is open.
+		return 1;
+	}
+
+	
 
 
 
@@ -205,6 +227,7 @@ void showHelp()
 		" Common options:\n"
 		"\n"
 		"\t-o <file>  : specify output file. (default: <input file>.aes)\n"
+		"-t-s         : skip password check during decryption.\n"
 		"\t-f         : do not include file integrity hash.\n"
 		"\n";
 	printf("%s",helpText);
