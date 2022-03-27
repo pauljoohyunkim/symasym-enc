@@ -1,2 +1,5 @@
 src/symmetric/aes/aesenc
+src/symmetric/aes/testkey
+src/symmetric/aes/testinput
+src/symmetric/aes/testinput.aes
 test/
