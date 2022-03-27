@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	int n;
 	int r;
 	int nRound;
-	int keylen;
+	int keylen;			//keylen = 4 * n
 
 	// Options
 	/*
@@ -62,26 +62,24 @@ int main(int argc, char** argv)
 						n = 4;
 						r = 11;
 						nRound = 10;
-						keylen = 16;
 						break;
 					case '2':
 						printf("[INFO] AES-192 selected.\n");
 						n = 6;
 						r = 13;
 						nRound = 12;
-						keylen = 24;
 						break;
 					case '3':
 						printf("[INFO] AES-256 selected.\n");
 						n = 8;
 						r = 15;
 						nRound = 14;
-						keylen = 32;
 						break;
 					default:
 						printf("[ERROR] Unknown AES mode.\n");
 						return 1;
-				}				
+				}
+				keylen = 4 * n;				
 				break;
 			case 'i':
 				optI = true;
