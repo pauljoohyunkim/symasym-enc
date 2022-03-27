@@ -143,3 +143,107 @@ void aes_key_schedule(int n, uint8_t* key, int r)
 	}
 }
 
+// b3 = b1 xor b2
+void add16bytes(uint8_t* b1, uint8_t* b2, uint8_t* b3)
+{
+	for(int i = 0; i < 16; i++)
+	{
+		b3[i] = b1[i] ^ b2[i];
+	}
+}
+
+void sub16bytes(uint8_t* b)
+{
+	for(int i = 0; i < 16; i++)
+	{
+		b[i] = sbox[b[i]];
+	}
+}
+
+// Permutation (AKA ShiftRows)
+void permutation(uint8_t* buffer)
+{
+    //Second row
+    uint8_t temp[4];
+    temp[0] = buffer[1];
+    temp[1] = buffer[5];
+    temp[2] = buffer[9];
+    temp[3] = buffer[13];
+    buffer[1] = temp[1];
+    buffer[5] = temp[2];
+    buffer[9] = temp[3];
+    buffer[13] = temp[0];
+
+    //Third row
+    temp[0] = buffer[2];
+    temp[1] = buffer[6];
+    temp[2] = buffer[10];
+    temp[3] = buffer[14];
+    buffer[2] = temp[2];
+    buffer[6] = temp[3];
+    buffer[10] = temp[0];
+    buffer[14] = temp[1];
+
+    //Fourth row
+    temp[0] = buffer[3];
+    temp[1] = buffer[7];
+    temp[2] = buffer[11];
+    temp[3] = buffer[15];
+    buffer[3] = temp[3];
+    buffer[7] = temp[0];
+    buffer[11] = temp[1];
+    buffer[15] = temp[2];
+}
+
+void mult(uint8_t* buffer)
+{
+    //Copy buffer to temp buffer
+    uint8_t temp[16];
+    for(int i = 0; i < 16; i++)
+    {
+        temp[i] = buffer[i];
+    }
+
+    buffer[0] = table_2[temp[0]] ^ table_3[temp[1]] ^ temp[2] ^ temp[3];
+    buffer[1] = temp[0] ^ table_2[temp[1]] ^ table_3[temp[2]] ^ temp[3];
+    buffer[2] = temp[0] ^ temp[1] ^ table_2[temp[2]] ^ table_3[temp[3]];
+    buffer[3] = table_3[temp[0]] ^ temp[1] ^ temp[2] ^ table_2[temp[3]];
+    buffer[4] = table_2[temp[4]] ^ table_3[temp[5]] ^ temp[6] ^ temp[7];
+    buffer[5] = temp[4] ^ table_2[temp[5]] ^ table_3[temp[6]] ^ temp[7];
+    buffer[6] = temp[4] ^ temp[5] ^ table_2[temp[6]] ^ table_3[temp[7]];
+    buffer[7] = table_3[temp[4]] ^ temp[5] ^ temp[6] ^ table_2[temp[7]];
+    buffer[8] = table_2[temp[8]] ^ table_3[temp[9]] ^ temp[10] ^ temp[11];
+    buffer[9] = temp[8] ^ table_2[temp[9]] ^ table_3[temp[10]] ^ temp[11];
+    buffer[10] = temp[8] ^ temp[9] ^ table_2[temp[10]] ^ table_3[temp[11]];
+    buffer[11] = table_3[temp[8]] ^ temp[9] ^ temp[10] ^ table_2[temp[11]];
+    buffer[12] = table_2[temp[12]] ^ table_3[temp[13]] ^ temp[14] ^ temp[15];
+    buffer[13] = temp[12] ^ table_2[temp[13]] ^ table_3[temp[14]] ^ temp[15];
+    buffer[14] = temp[12] ^ temp[13] ^ table_2[temp[14]] ^ table_3[temp[15]];
+    buffer[15] = table_3[temp[12]] ^ temp[13] ^ temp[14] ^ table_2[temp[15]];
+
+}
+
+// nRound = 10,12,14 for AES128, AES192, AES256 resp.
+// n, r as given before in aes_key_schedule
+void aes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound)
+{
+	// Key scheduling
+	aes_key_schedule(n, key, r);
+	
+	// Adding round key
+	add16bytes(buffer, key, buffer);
+
+	for(int i = 1; i < nRound; i++)
+	{
+		// SubBytes
+		sub16bytes(buffer);
+		permutation(buffer);
+		mult(buffer);
+		add16bytes(buffer, key + 16 * i, buffer);
+	}
+
+	sub16bytes(buffer);
+	permutation(buffer);
+	add16bytes(buffer, key + 16 * nRound, buffer);
+			
+}
