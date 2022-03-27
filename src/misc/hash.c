@@ -3,6 +3,23 @@
 #include <stdint.h>
 #include "hash.h"
 
+// Hashes an uint8_t array with given prepend salt.
+// Requires dest to be larger than 32 bytes.
+void sha256A(int bufferlen, uint8_t* buffer, int saltlen, uint8_t* salt, uint8_t* dest)
+{
+    SHA256_CTX ctx;
+    SHA256_Init(&ctx);
+    if(saltlen > 0)
+    {
+        SHA256_Update(&ctx,salt,saltlen);
+    }
+    if(bufferlen > 0)
+    {
+        SHA256_Update(&ctx,buffer,bufferlen);
+    }
+    SHA256_Final(dest, &ctx);
+}
+
 // Hashes a file with given prepend salt.
 // Requires dest to be larger than 32 bytes.
 void sha256F(FILE* fp, int saltlen, uint8_t* salt, uint8_t* dest)

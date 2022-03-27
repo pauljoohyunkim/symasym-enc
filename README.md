@@ -18,7 +18,7 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * c6: 1 for skipping password check
     * c7: 1 for skipping file integrity check
 
-* (.): 16 byte IV (initialization vector)
+* (.): 16 byte IV (initialization vector) (Missing if c6==1 && c7==1)
 * (*): SHA256 hash of the password (with IV as prepended as salt) (Missing if c6==1)
 * (^): SHA256 hash of the original file (with IV as prepended as salt) (Missing if c7==1)
 
@@ -29,3 +29,6 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * (c0, c1, c2) = (0, 0, 0) ECB
     * (c0, c1, c2) = (0, 0, 1) CBC
     * (c0, c1, c2) = (0, 1, 0) CTR
+    * c6: 1 for skipping password check
+    * c7: 1 for skipping file integrity check
+

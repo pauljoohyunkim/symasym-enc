@@ -4,8 +4,12 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <stdbool.h>
+
+
 #include "aes.h"
 #include "aesenc.h"
+#include "aesbcm.h"
+#include "../../misc/hash.h"
 
 int main(int argc, char** argv)
 {
@@ -46,7 +50,7 @@ int main(int argc, char** argv)
 	char* inputFileName;
 	char* inputKeyFileName;
 	char* outputFileName;
-	unsigned int bcm;		//Block cipher mode of operation. (ecb = 1, cbc = 2, ctr = 3)
+	uint8_t bcm;		//Block cipher mode of operation. (ecb = 0, cbc = 1, ctr = 2)
 
 	bool optT = false, optI = false, optK = false, optB = false, optO = false, optH = false, optS = false , optF = false;
 	while((opt = getopt(argc, argv, ":t:i:k:b:o:hsf")) != -1)
@@ -99,17 +103,17 @@ int main(int argc, char** argv)
 				if(strncmp(optarg,"ecb",3) == 0)
 				{
 					printf("[INFO] Block cipher mode of operation: ECB\n");
-					bcm = 1;
+					bcm = 0;
 				}
 				else if(strncmp(optarg,"cbc", 3) == 0)
 				{
 					printf("[INFO] Block cipher mode of operation: CBC\n");
-					bcm = 2;
+					bcm = 1;
 				}
 				else if(strncmp(optarg,"ctr", 3) == 0)
 				{
 					printf("[INFO] Block cipher mode of operation: CTR\n");
-					bcm = 3;
+					bcm = 2;
 				}
 				else
 				{
@@ -133,7 +137,7 @@ int main(int argc, char** argv)
 				optS = true;
 
 				printf("[INFO] Password check will be skipped during decryption.\n");
-				return 0;
+				break;
 			case 'f':
 				optF = true;
 				printf("[INFO] File integrity hash will not be included.\n");
@@ -194,7 +198,7 @@ int main(int argc, char** argv)
 	}
 
 	// Output file opening
-	if((outputFile = fopen(outputFileName, "rb")) == NULL)
+	if((outputFile = fopen(outputFileName, "wb")) == NULL)
 	{
 		printf("[ERROR] Output file could not be opened.\n");
 		
@@ -202,10 +206,60 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
+	// README: 0x00 (A); AES encrypted files starts with two zero bytes.
+	fwrite("\x00\x00",1,2,outputFile);
+
+	// README: (B) 0x00 for AES-128, 0x01 for AES-192, 0x02 for AES-256
+	if(keylen == 16)
+	{
+		fwrite("\x00",1,1,outputFile);
+	}
+	else if(keylen == 24)
+	{
+		fwrite("\x01",1,1,outputFile);
+	}
+	else
+	{
+		fwrite("\x02",1,1,outputFile);
+	}
+
+	// README: Configuration (C)
+	// c0, c1, c2 is from BCM
+	// c3, c4, c5 is left zero.
+	// c6 from -s option	
+	// c7 from -f option
+	uint8_t c = bcm << 5;
+	if(optS)
+	{
+		c += 2;
+	}
+	if(optF)
+	{
+		c += 1;
+	}
+	fwrite(&c,1,1,outputFile);
+
+	//Initialization Vector (Does not exist if -s and -f are both used.)
+	uint8_t iv[16];
+	if(!(optS && optF))
+	{
+		iv16byte(iv);		//IV generation
+		fwrite(iv16byte,1,16,outputFile);
+	}
+
+	uint8_t temphash[32] = { 0 };
+	// README: sha256(iv + password)
+	if(!(optS))
+	{
+		sha256A(keylen,key,16,iv,temphash);
+		fwrite(temphash,1,32,outputFile);
+	}
 	
 
 
 
+	fclose(inputFile);
+	fclose(outputFile);
 	return 0;
 }
 
