@@ -1,24 +1,21 @@
 CC=gcc
 
-test.bin: test.o aesbcm.o aes.o
-	$(CC) test.o aesbcm.o aes.o -o test.bin -g
+aesenc.bin: aesenc.o aes.o aesbcm.o hash.o
+	$(CC) aesenc.o aes.o aesbcm.o hash.o -g -lcrypto -o aesenc.bin
 
-test.o: test.c
-	$(CC) test.c -c -g -o test.o
-
-aesbcm.o: aesbcm.c
-	$(CC) aesbcm.c -c -g -o aesbcm.o
-
-aesenc.bin: aesenc.o aes.o
-	$(CC) aesenc.o aes.o -o aesenc.bin -g
-
-aesenc.o: aesenc.c
-	$(CC) aesenc.c -c -g -o aesenc.o
+aesenc.o: aesenc.c aesenc.h
+	$(CC) aesenc.c -c -g
 
 aes.o: aes.c aes.h
-	$(CC) aes.c -c -g -o aes.o
+	$(CC) aes.c -c -g
+
+aesbcm.o: aesbcm.c aesbcm.h
+	$(CC) aesbcm.c -c -g
+
+hash.o: ../../misc/hash.c ../../misc/hash.h
+	$(CC) ../../misc/hash.c -c -g -o hash.o
 
 clean:
 	rm *.bin
 	rm *.o
-	rm testinput.aes
+	#rm testinput.aes

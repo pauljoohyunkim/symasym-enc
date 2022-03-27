@@ -254,7 +254,25 @@ int main(int argc, char** argv)
 		sha256A(keylen,key,16,iv,temphash);
 		fwrite(temphash,1,32,outputFile);
 	}
+
+	// README: sha256(iv + file)
+	if(!(optF))
+	{
+		sha256F(inputFile,16,iv,temphash);
+		fwrite(temphash, 1,32,outputFile);
+	}
 	
+	switch(bcm)
+	{
+		case 0:
+			//ECB
+			ecb_aes_enc(key,n,r,nRound,inputFile,outputFile);
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+	}
 
 
 
@@ -279,7 +297,7 @@ void showHelp()
 		" Common options:\n"
 		"\n"
 		"\t-o <file>  : specify output file. (default: <input file>.aes)\n"
-		"-t-s         : skip password check during decryption.\n"
+		"\t-s         : skip password check during decryption.\n"
 		"\t-f         : do not include file integrity hash.\n"
 		"\n";
 	printf("%s",helpText);
