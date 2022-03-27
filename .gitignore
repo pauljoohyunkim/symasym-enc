@@ -2,3 +2,5 @@ src/symmetric/aes/aesenc
 src/symmetric/aes/test*
 src/misc/test*
 test/
+*.o
+*.bin

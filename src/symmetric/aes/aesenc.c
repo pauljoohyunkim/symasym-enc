@@ -241,11 +241,9 @@ int main(int argc, char** argv)
 
 	//Initialization Vector (Does not exist if -s and -f are both used.)
 	uint8_t iv[16];
-	if(!(optS && optF))
-	{
-		iv16byte(iv);		//IV generation
-		fwrite(iv16byte,1,16,outputFile);
-	}
+	iv16byte(iv);		//IV generation
+	fwrite(iv16byte,1,16,outputFile);
+	
 
 	uint8_t temphash[32] = { 0 };
 	// README: sha256(iv + password)
@@ -266,11 +264,13 @@ int main(int argc, char** argv)
 	{
 		case 0:
 			//ECB
-			ecb_aes_enc(key,n,r,nRound,inputFile,outputFile);
+			ecb_aes_enc(key, n, r, nRound, inputFile, outputFile);
 			break;
 		case 1:
+			cbc_aes_enc(iv, key, n, r, nRound, inputFile, outputFile);
 			break;
 		case 2:
+			ctr_aes_enc(iv, key, n, r, nRound, inputFile, outputFile);
 			break;
 	}
 
@@ -278,6 +278,8 @@ int main(int argc, char** argv)
 
 	fclose(inputFile);
 	fclose(outputFile);
+
+	printf("[INFO] Finished.\n");
 	return 0;
 }
 

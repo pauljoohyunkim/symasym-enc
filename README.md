@@ -5,8 +5,8 @@ Note that these are created for proof of concept purposes, and you are welcome t
 It may not be the best to directly implement them. (It might be more efficient to use a professional library, such as openssl.)
 ## Symmetric Encryption File Formats
 
-Encrypted files produced by the symmetric encryption programs will generally be in the following format. (Parts in paranthesis may be missing based on the configuration.)
-> 0x00 A B C (.) (*) (^) [Cipher text]
+Encrypted files produced by the symmetric encryption programs will generally be in the following format. (Parts in round brackets may be missing based on the configuration.)
+> 0x00 A B C [.] (*) (^) [Cipher text]
 
 * A
     * 0x00: AES
@@ -18,12 +18,12 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * c6: 1 for skipping password check
     * c7: 1 for skipping file integrity check
 
-* (.): 16 byte IV (initialization vector) (Missing if c6==1 && c7==1)
+* [.]: 16 byte IV (initialization vector)
 * (*): SHA256 hash of the password (with IV as prepended as salt) (Missing if c6==1)
 * (^): SHA256 hash of the original file (with IV as prepended as salt) (Missing if c7==1)
 
 ### AES (src/symmetric/aes)
-0x00 0x00 B C (.) (*) (^) [Cipher text]
+0x00 0x00 B C [.] (*) (^) [Cipher text]
 * B: 0x00 for AES-128, 0x01 for AES-192, 0x02 for AES-256
 * C:
     * (c0, c1, c2) = (0, 0, 0) ECB
