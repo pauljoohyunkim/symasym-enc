@@ -53,6 +53,28 @@ void ecb_aes_enc(uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* 
     }
 }
 
+void inv_ecb_aes_enc(uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* outputFile)
+{
+    uint8_t buffer[16] = { 0 };
+    
+    int read_bytes = fread(buffer,1,16,inputFile);
+    
+    //Reading, applying AES, and writing
+    while(read_bytes == 16)
+    {
+        invaes(key,buffer,n,r,nRound);
+        fwrite(buffer,1,16,outputFile);
+        read_bytes = fread(buffer,1,16,inputFile);
+    }
+
+    //Potential last block
+    if(read_bytes != 0)
+    {
+        invaes(key,buffer,n,r,nRound);
+        fwrite(buffer,1,read_bytes,outputFile);
+    }
+}
+
 void cbc_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* outputFile)
 {
     uint8_t buffer[16] = { 0 };

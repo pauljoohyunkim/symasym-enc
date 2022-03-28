@@ -246,7 +246,7 @@ int main(int argc, char** argv)
 	//Initialization Vector (Does not exist if ECB.)
 	uint8_t iv[16];
 	iv16byte(iv);		//IV generation
-	fwrite(iv16byte,1,16,outputFile);
+	fwrite(iv,1,16,outputFile);
 	
 
 	uint8_t temphash[32] = { 0 };

@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <unistd.h>
 
+#include "symdec.h"
 #include "../misc/hash.h"
+#include "../symmetric/aes/aesbcm.h"
 
 #define MAXKEYLEN 1000
 #define TMPBUFSIZ 512
@@ -139,7 +142,7 @@ int main(int argc, char** argv)
 	
 	// Read header.
 	read_bytes = fread(header,1,4,inputFile);
-	if(read_bytes <= 4)
+	if(read_bytes < 4)
 	{
 		printf("[ERROR] %u bytes read. This is not even the length of the expected header!\n", read_bytes);
 		fclose(inputFile);
@@ -159,7 +162,7 @@ int main(int argc, char** argv)
 	}
 
 	bool passhash_included = true;
-	bool file_integrity_include = true;
+	bool file_integrity_included = true;
 	bool to_read_passhash = true;
 	bool to_read_file_integrity = true;
 
@@ -177,7 +180,7 @@ int main(int argc, char** argv)
 	}
 	if(header[3] && 1 != 0)
 	{
-		file_integrity_include = false;
+		file_integrity_included = false;
 	}
 
 
@@ -189,7 +192,7 @@ int main(int argc, char** argv)
 		case 0x00:		//AES: A = 0x00
 			// tempbuffer = { n, r, nRound }
 			iv = (uint8_t*) malloc(16);		// AES is given 16 byte IV
-			fread(iv, 1, 16, inputFile);
+			fread(iv, 1, 16, inputFile);	// First 16 bytes is IV.
 
 			switch(header[2])		//README: B
 			{
@@ -223,7 +226,7 @@ int main(int argc, char** argv)
 				if(!optS)
 				{
 					sha256A(4 * tempbuffer[0], key, 16, iv, passhash_computed);
-					if(strcmp(passhash_included,passhash_computed) != 0)
+					if(strncmp(passhash_read, passhash_computed, HASHLEN) != 0)
 					{
 						//Wrong password
 						printf("[ERROR] Incorrect key file.\n");
@@ -237,21 +240,33 @@ int main(int argc, char** argv)
 					printf("[INFO] Key check is skipped.\n");
 				}
 			}
-
 			else		// Skip password check regardless of -s option
 			{
 				optS = true;
 				printf("[INFO] Password hash is not included, so password check will be skipped.\n");
 			}
 
+			// File integrity hash
+			if(file_integrity_included)
+			{
+				fread(passhash_read, 1, HASHLEN, inputFile);
+			}
+			else
+			{
+				printf("[INFO] File integrity hash is not included, so file integrity check will be skipped after decryption.\n");
+			}
+
 			switch((header[3] && 0b11111100) >> 2)		//README: C; bcm
 			{
 				case 0b00000:			//ECB
-
+					printf("[INFO] ECB mode detected.\n");
+					inv_ecb_aes_enc(key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
 					break;
 				case 0b00001:			//CBC
+					printf("[INFO] CBC mode detected.\n");
 					break;
 				case 0b00010:			//CTR
+					printf("[INFO] CTR mode detected.\n");
 					break;
 				default:
 					printf("[ERROR] Unknown block cipher mode of operation.\n");
