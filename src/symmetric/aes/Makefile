@@ -15,6 +15,12 @@ aesbcm.o: aesbcm.c aesbcm.h
 hash.o: ../../misc/hash.c ../../misc/hash.h
 	$(CC) ../../misc/hash.c -c -g -o hash.o
 
+test.bin : test.o aes.o
+	$(CC) test.o aes.o -g -o test.bin
+
+test.o: test.c
+	$(CC) test.c -c -g
+
 clean:
 	rm *.bin
 	rm *.o
