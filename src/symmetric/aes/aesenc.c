@@ -189,6 +189,7 @@ int main(int argc, char** argv)
 		printf("[INFO] Key file was shorter than the length required by the specified AES type, so it was padded with zeros.");
 	}	
 	fclose(keyFile);
+	free(inputKeyFileName);
 	
 	// Input file opening
 	if((inputFile = fopen(inputFileName, "rb")) == NULL)
@@ -205,6 +206,9 @@ int main(int argc, char** argv)
 		fclose(inputFile);		// If it reached this point, currently the inputfile is open.
 		return 1;
 	}
+
+	free(inputFileName);
+	free(outputFileName);
 
 	// README: 0x00 (A); AES encrypted files starts with two zero bytes.
 	fwrite("\x00\x00",1,2,outputFile);
