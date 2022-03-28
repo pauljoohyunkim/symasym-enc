@@ -1,27 +1,27 @@
-CC=gcc
+CC = gcc
+CFLAGS = -g
 
 aesenc.bin: aesenc.o aes.o aesbcm.o hash.o
-	$(CC) aesenc.o aes.o aesbcm.o hash.o -g -lcrypto -o aesenc.bin
+	$(CC) $(CFLAGS) aesenc.o aes.o aesbcm.o hash.o -lcrypto -o aesenc.bin
 
 aesenc.o: aesenc.c aesenc.h
-	$(CC) aesenc.c -c -g
+	$(CC) $(CFLAGS) aesenc.c -c
 
 aes.o: aes.c aes.h
-	$(CC) aes.c -c -g
+	$(CC) $(CFLAGS) aes.c -c
 
 aesbcm.o: aesbcm.c aesbcm.h
-	$(CC) aesbcm.c -c -g
+	$(CC) $(CFLAGS) aesbcm.c -c
 
 hash.o: ../../misc/hash.c ../../misc/hash.h
-	$(CC) ../../misc/hash.c -c -g -o hash.o
+	$(CC) $(CFLAGS) ../../misc/hash.c -c -o hash.o
 
 test.bin : test.o aes.o
-	$(CC) test.o aes.o -g -o test.bin
+	$(CC) $(CFLAGS) test.o aes.o -o test.bin
 
 test.o: test.c
-	$(CC) test.c -c -g
+	$(CC) $(CFLAGS) test.c -c
 
 clean:
-	rm *.bin
-	rm *.o
+	rm *.bin *.o
 	#rm testinput.aes

@@ -186,7 +186,7 @@ int main(int argc, char** argv)
 	read_bytes = fread(key, 1, keylen, keyFile);
 	if(read_bytes < keylen)
 	{
-		printf("[INFO] Key file was shorter than the length required by the specified AES type, so it was padded with zeros.");
+		printf("[INFO] Key file was shorter than the length required by the specified AES type, so it was padded with zeros. Make sure you use the same key file for decryption.\n");
 	}	
 	fclose(keyFile);
 	free(inputKeyFileName);
@@ -232,7 +232,7 @@ int main(int argc, char** argv)
 	// c3, c4, c5 is left zero.
 	// c6 from -s option	
 	// c7 from -f option
-	uint8_t c = bcm << 5;
+	uint8_t c = bcm << 2;
 	if(optS)
 	{
 		c += 2;
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 	}
 	fwrite(&c,1,1,outputFile);
 
-	//Initialization Vector (Does not exist if -s and -f are both used.)
+	//Initialization Vector (Does not exist if ECB.)
 	uint8_t iv[16];
 	iv16byte(iv);		//IV generation
 	fwrite(iv16byte,1,16,outputFile);
