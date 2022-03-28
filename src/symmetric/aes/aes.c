@@ -23,7 +23,9 @@ const uint8_t sbox[256] = {
   0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e,
   0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf,
   0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16 };
-const uint8_t rsbox[256] = {
+
+// Inverse S-box
+const uint8_t isbox[256] = {
   0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e, 0x81, 0xf3, 0xd7, 0xfb,
   0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87, 0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb,
   0x54, 0x7b, 0x94, 0x32, 0xa6, 0xc2, 0x23, 0x3d, 0xee, 0x4c, 0x95, 0x0b, 0x42, 0xfa, 0xc3, 0x4e,
@@ -195,6 +197,14 @@ void sub16bytes(uint8_t* b)
 	}
 }
 
+void isub16bytes(uint8_t* b)
+{
+	for(int i = 0; i < 16; i++)
+	{
+		b[i] = isbox[b[i]];
+	}
+}
+
 // Permutation (AKA ShiftRows)
 void permutation(uint8_t* buffer)
 {
@@ -228,6 +238,42 @@ void permutation(uint8_t* buffer)
     buffer[7] = temp[0];
     buffer[11] = temp[1];
     buffer[15] = temp[2];
+}
+
+// Inverse permutation
+void ipermutation(uint8_t* buffer)
+{
+    //Second row
+    uint8_t temp[4];
+    temp[0] = buffer[1];
+    temp[1] = buffer[5];
+    temp[2] = buffer[9];
+    temp[3] = buffer[13];
+    buffer[1] = temp[3];
+    buffer[5] = temp[0];
+    buffer[9] = temp[1];
+    buffer[13] = temp[2];
+
+    //Third row
+    temp[0] = buffer[2];
+    temp[1] = buffer[6];
+    temp[2] = buffer[10];
+    temp[3] = buffer[14];
+    buffer[2] = temp[2];
+    buffer[6] = temp[3];
+    buffer[10] = temp[0];
+    buffer[14] = temp[1];
+
+    //Fourth row
+    temp[0] = buffer[3];
+    temp[1] = buffer[7];
+    temp[2] = buffer[11];
+    temp[3] = buffer[15];
+    buffer[3] = temp[1];
+    buffer[7] = temp[2];
+    buffer[11] = temp[3];
+    buffer[15] = temp[0];
+
 }
 
 void mult(uint8_t* buffer)
@@ -281,4 +327,20 @@ void aes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound)
 	permutation(buffer);
 	add16bytes(buffer, key + 16 * nRound, buffer);
 			
+}
+
+// Inverse aes
+void invaes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound)
+{
+    // Key scheduling
+    aes_key_schedule(n, key, r);
+
+    add16bytes(buffer, key + 16 * nRound, buffer);
+    ipermutation(buffer);
+
+
+
+    
+
+
 }
