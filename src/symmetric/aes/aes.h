@@ -15,6 +15,7 @@ void isub16bytes(uint8_t* b);
 void permutation(uint8_t* buffer);
 void ipermutation(uint8_t* buffer);
 void mult(uint8_t* buffer);
+void imult(uint8_t* buffer);
 void aes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound);
 void invaes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound);
 
