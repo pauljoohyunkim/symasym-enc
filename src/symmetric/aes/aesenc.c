@@ -257,10 +257,10 @@ int main(int argc, char** argv)
 		fwrite(temphash,1,32,outputFile);
 	}
 
-	// README: sha256(iv + file)
+	// README: sha256(key + file)
 	if(!(optF))
 	{
-		sha256F(inputFile,16,iv,temphash);
+		sha256F(inputFile, keylen, key, temphash);
 		fwrite(temphash, 1,32,outputFile);
 	}
 	

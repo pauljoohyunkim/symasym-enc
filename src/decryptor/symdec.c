@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 	FILE* inputFile;
 	FILE* keyFile;
 	FILE* outputFile;
-	unsigned int keylen = 0;
+	unsigned int keylen = 0;		// Used for file integrity check later.
 
 	uint8_t key[MAXKEYLEN] = { 0 };
 	// Key reading
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 		printf("[ERROR] Key file could not be read.\n");
 		return 1;
 	}
-	keylen = fread(key, 1, MAXKEYLEN, keyFile);
+	fread(key, 1, MAXKEYLEN, keyFile);
 	fclose(keyFile);
 	free(inputKeyFileName);
 
@@ -183,7 +183,7 @@ int main(int argc, char** argv)
 		file_integrity_included = false;
 	}
 
-	unsigned int stuffing = 0;	// Number of needed bytes for a full block for block ciphers
+	unsigned int stuffing = 0;	// Number of needed bytes for a full block for block ciphers	
 
 	// More extensive case tree coming up...
 	// For each option, tempbuffer holds information that are relevant.
@@ -221,6 +221,8 @@ int main(int argc, char** argv)
 					free(iv);
 					return 1;
 			}
+
+			keylen = 4 * tempbuffer[0];
 			
 			// Password Hash
 			if(passhash_included)
@@ -252,10 +254,11 @@ int main(int argc, char** argv)
 			// File integrity hash
 			if(file_integrity_included)
 			{
-				fread(passhash_read, 1, HASHLEN, inputFile);
+				fread(file_integrity_read, 1, HASHLEN, inputFile);
 			}
 			else
 			{
+				optF = true;	// Skip file integrity check regardless of -f option
 				printf("[INFO] File integrity hash is not included, so file integrity check will be skipped after decryption.\n");
 			}
 
@@ -301,7 +304,6 @@ int main(int argc, char** argv)
 
 	}
 
-	free(iv);
 
 	fclose(inputFile);
 	fclose(outputFile);
@@ -312,6 +314,28 @@ int main(int argc, char** argv)
 		uintmax_t filesize = sizeN(outputFileName);
 		truncate(outputFileName,sizeN(outputFileName) - stuffing);
 	}
+
+	
+
+	// File integrity check
+	if(!optF)
+	{
+		outputFile = fopen(outputFileName,"rb");
+		sha256F(outputFile,keylen,key,file_integrity_computed);
+		if(memcmp(file_integrity_computed,file_integrity_read, HASHLEN) == 0)
+		{
+			printf("[INFO] File integrity verified.\n");
+		}
+		else
+		{
+			printf("[WARNING] File integrity mismatch. There may be some corruption.\n");
+		}
+		fclose(outputFile);
+	}
+
+	free(iv);
+
+	
 
 	free(inputFileName);
 	free(outputFileName);

@@ -23,11 +23,11 @@ Encrypted files produced by the symmetric encryption programs will generally be 
 * [.]: IV (initialization vector)
     * This will always be added regardless of it being used or not. The length depends on the encryption algorithm.
 * (*): SHA256 hash of the password (with IV as prepended as salt) (Missing if c6==1)
-* (^): SHA256 hash of the original file (with IV as prepended as salt) (Missing if c7==1)
+* (^): SHA256 hash of the original file (with key as prepended as salt) (Missing if c7==1)
 * [%]: Extra information used for block cipher mode of operation. The length depends on the encryption algorithm and the block cipher mode of operation.
 
 ### AES (src/symmetric/aes)
-0x00 0x00 B C [.] (*) (^) [Cipher text]
+0x00 0x00 B C [.] (*) (^) [%] [Cipher text]
 
 * B: 0x00 for AES-128, 0x01 for AES-192, 0x02 for AES-256
 * C:
