@@ -1,6 +1,6 @@
 src/symmetric/aes/aesenc
 src/symmetric/aes/test*
 src/misc/test*
-test/
+src/test/
 *.o
 *.bin

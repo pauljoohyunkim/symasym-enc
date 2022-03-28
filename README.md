@@ -7,7 +7,7 @@ It may not be the best to directly implement them. (It might be more efficient t
 
 Encrypted files produced by the symmetric encryption programs will generally be in the following format. (Parts in round brackets may be missing based on the configuration.)
 
-0x00 A B C [.] (*) (^) [Cipher text]
+0x00 A B C [.] (*) (^) [%] [Cipher text]
 
 * A
     * 0x00: AES
@@ -24,6 +24,7 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * This will always be added regardless of it being used or not. The length depends on the encryption algorithm.
 * (*): SHA256 hash of the password (with IV as prepended as salt) (Missing if c6==1)
 * (^): SHA256 hash of the original file (with IV as prepended as salt) (Missing if c7==1)
+* [%]: Extra information used for block cipher mode of operation. The length depends on the encryption algorithm and the block cipher mode of operation.
 
 ### AES (src/symmetric/aes)
 0x00 0x00 B C [.] (*) (^) [Cipher text]
@@ -37,3 +38,4 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * c7: 1 for skipping file integrity check
     * Rest are set to zero.
 * [.]: 16 byte IV
+* [%]: One byte reserved for signalling how many bytes from the end to get rid of after decryption. (Missing if CTR mode)

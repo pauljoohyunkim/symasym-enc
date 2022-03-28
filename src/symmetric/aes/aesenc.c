@@ -10,6 +10,7 @@
 #include "aesenc.h"
 #include "aesbcm.h"
 #include "../../misc/hash.h"
+#include "../../misc/file.h"
 
 int main(int argc, char** argv)
 {
@@ -207,8 +208,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	free(inputFileName);
-	free(outputFileName);
+
 
 	// README: 0x00 (A); AES encrypted files starts with two zero bytes.
 	fwrite("\x00\x00",1,2,outputFile);
@@ -264,16 +264,24 @@ int main(int argc, char** argv)
 		fwrite(temphash, 1,32,outputFile);
 	}
 	
+	// Number of needed bytes for a full 16 byte block (NOT NEEDED FOR CTR)
+	uintmax_t filesize = sizeF(inputFile);
+	uint8_t stuffing = (- filesize % 16);
+
 	switch(bcm)
 	{
 		case 0:
 			//ECB
+			fwrite(&stuffing, 1, 1, outputFile);
 			ecb_aes_enc(key, n, r, nRound, inputFile, outputFile);
 			break;
 		case 1:
+			//CBC
+			fwrite(&stuffing, 1, 1, outputFile);
 			cbc_aes_enc(iv, key, n, r, nRound, inputFile, outputFile);
 			break;
 		case 2:
+			//CTR
 			ctr_aes_enc(iv, key, n, r, nRound, inputFile, outputFile);
 			break;
 	}

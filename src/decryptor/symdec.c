@@ -7,6 +7,7 @@
 
 #include "symdec.h"
 #include "../misc/hash.h"
+#include "../misc/file.h"
 #include "../symmetric/aes/aesbcm.h"
 
 #define MAXKEYLEN 1000
@@ -133,8 +134,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	free(inputFileName);
-	free(outputFileName);
+	
 
 	unsigned int read_bytes = 0;		//Used for checking how much byte read, temporarily.
 	uint8_t header[4] = { 0 };					//Default 4-byte header
@@ -174,16 +174,16 @@ int main(int argc, char** argv)
 	uint8_t* iv;
 
 	//c6,c7
-	if(header[3] && 2 != 0)
+	if(header[3] & 2 != 0)
 	{
 		passhash_included = false;
 	}
-	if(header[3] && 1 != 0)
+	if(header[3] & 1 != 0)
 	{
 		file_integrity_included = false;
 	}
 
-
+	unsigned int stuffing = 0;	// Number of needed bytes for a full block for block ciphers
 
 	// More extensive case tree coming up...
 	// For each option, tempbuffer holds information that are relevant.
@@ -200,16 +200,19 @@ int main(int argc, char** argv)
 					tempbuffer[0] = 4;
 					tempbuffer[1] = 11;
 					tempbuffer[2] = 10;
+					printf("[INFO] AES-128 detected.\n");
 					break;
 				case 0x01:
 					tempbuffer[0] = 6;
 					tempbuffer[1] = 13;
 					tempbuffer[2] = 12;
+					printf("[INFO] AES-192 detected.\n");
 					break;
 				case 0x02:
 					tempbuffer[0] = 8;
 					tempbuffer[1] = 15;
 					tempbuffer[2] = 14;
+					printf("[INFO] AES-256 detected.\n");
 					break;
 				default:
 					printf("[ERROR] Unknown AES type.\n");
@@ -226,7 +229,7 @@ int main(int argc, char** argv)
 				if(!optS)
 				{
 					sha256A(4 * tempbuffer[0], key, 16, iv, passhash_computed);
-					if(strncmp(passhash_read, passhash_computed, HASHLEN) != 0)
+					if(memcmp(passhash_read, passhash_computed, HASHLEN) != 0)
 					{
 						//Wrong password
 						printf("[ERROR] Incorrect key file.\n");
@@ -256,14 +259,17 @@ int main(int argc, char** argv)
 				printf("[INFO] File integrity hash is not included, so file integrity check will be skipped after decryption.\n");
 			}
 
-			switch((header[3] && 0b11111100) >> 2)		//README: C; bcm
+			switch((header[3] & 0b11111100) >> 2)		//README: C; bcm
 			{
 				case 0b00000:			//ECB
+					fread(&stuffing, 1, 1, inputFile);
 					printf("[INFO] ECB mode detected.\n");
 					inv_ecb_aes_enc(key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
 					break;
 				case 0b00001:			//CBC
+					fread(&stuffing, 1, 1, inputFile);
 					printf("[INFO] CBC mode detected.\n");
+					inv_cbc_aes_enc(iv, key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
 					break;
 				case 0b00010:			//CTR
 					printf("[INFO] CTR mode detected.\n");
@@ -297,7 +303,20 @@ int main(int argc, char** argv)
 
 	free(iv);
 
+	fclose(inputFile);
+	fclose(outputFile);
 
+	//Truncation
+	if(stuffing > 0)
+	{
+		uintmax_t filesize = sizeN(outputFileName);
+		truncate(outputFileName,sizeN(outputFileName) - stuffing);
+	}
+
+	free(inputFileName);
+	free(outputFileName);
+
+	printf("Finished.\n");
 	return 0;
 }
 
