@@ -156,6 +156,7 @@ void inv_cbc_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* 
     */
 }
 
+// Counter Mode (This is equal to its inverse)
 void ctr_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* outputFile)
 {
     uint8_t counter[16] = { 0 };
@@ -193,6 +194,6 @@ void ctr_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* inpu
         {
             noncexorcounter[i] ^= buffer[i];
         }
-        fwrite(noncexorcounter,1,16,outputFile);
+        fwrite(noncexorcounter,1,read_bytes,outputFile);
     }
 }
