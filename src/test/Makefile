@@ -3,8 +3,8 @@ CFLAGS = -g
 
 all: aesenc.bin symdec.bin symkeygen.bin
 
-symdec.bin: symdec.o aes.o hash.o aesbcm.o file.o
-	$(CC) $(CFLAGS) symdec.o aes.o hash.o aesbcm.o file.o -lcrypto -o symdec.bin
+symdec.bin: symdec.o aes.o hash.o aesbcm.o file.o keygen.o
+	$(CC) $(CFLAGS) symdec.o aes.o hash.o aesbcm.o file.o keygen.o -lcrypto -o symdec.bin
 
 symdec.o: decryptor/symdec.c decryptor/symdec.h
 	$(CC) $(CFLAGS) decryptor/symdec.c -c

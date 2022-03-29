@@ -9,6 +9,7 @@
 #include "../misc/hash.h"
 #include "../misc/file.h"
 #include "../symmetric/aes/aesbcm.h"
+#include "../symmetric/keygen/keygen.h"
 
 int main(int argc, char** argv)
 {
@@ -30,8 +31,8 @@ int main(int argc, char** argv)
     f: Skip file integrity check (not relevant when file integrity hash is not included.)
 
     */
-    bool optI = false, optK = false, optO = false, optH = false, optS = false, optF = false;
-    while((opt = getopt(argc, argv, ":i:k:o:hsf")) != -1)
+    bool optI = false, optK = false, optP = false, optO = false, optH = false, optS = false, optF = false;
+    while((opt = getopt(argc, argv, ":i:k:po:hsf")) != -1)
     {
         switch(opt)
         {
@@ -48,7 +49,10 @@ int main(int argc, char** argv)
 				strcpy(inputKeyFileName, optarg);
 				printf("[INFO] Input key file: %s\n", inputKeyFileName);
 				break;
-            
+            case 'p':
+				optP = true;
+				printf("[INFO] Integrated keygen to be used.\n");
+				break;
             case 'o':
 				optO = true;
 				outputFileName = (char*) malloc((strlen(optarg) + 1) * sizeof(char));
@@ -83,9 +87,16 @@ int main(int argc, char** argv)
     }
 
 	// Checking mandatory fields
-	if(!(optI && optK))
+	if(!(optI && (optK || optP)))
 	{
 		printf("[ERROR] One of the required options is missing.\n");
+		return 1;
+	}
+
+	// -k and -p are mutually exclusive.
+	if(optK && optP)
+	{
+		printf("[ERROR] Make up your mind! Use either -k or -p!\n");
 		return 1;
 	}
 
@@ -104,15 +115,23 @@ int main(int argc, char** argv)
 	unsigned int keylen = 0;		// Used for file integrity check later.
 
 	uint8_t key[MAXKEYLEN] = { 0 };
-	// Key reading
-	if((keyFile = fopen(inputKeyFileName, "rb")) == NULL)
+
+	if(optK)
 	{
-		printf("[ERROR] Key file could not be read.\n");
-		return 1;
+		// Key reading
+		if((keyFile = fopen(inputKeyFileName, "rb")) == NULL)
+		{
+			printf("[ERROR] Key file could not be read.\n");
+			return 1;
+		}
+		fread(key, 1, MAXKEYLEN, keyFile);
+		fclose(keyFile);
+		free(inputKeyFileName);
 	}
-	fread(key, 1, MAXKEYLEN, keyFile);
-	fclose(keyFile);
-	free(inputKeyFileName);
+	if(optP)
+	{
+		keygen(MAXKEYLEN, NULL, key);
+	}
 
 	// Input file opening
 	if((inputFile = fopen(inputFileName, "rb")) == NULL)
