@@ -5,7 +5,9 @@
 #define HASHLEN 32          //sha256 hash length
 #define HASHREP 100         //Hash repetition
 
-int keygen(unsigned int keylen, FILE* fp);
+#include <stdint.h>
+
+int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer);
 void getPassword(char *password);
 
 #endif

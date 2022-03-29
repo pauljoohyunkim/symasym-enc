@@ -9,7 +9,7 @@
 
 
 // Returns 1 if password does not match.
-int keygen(unsigned int keylen, FILE* fp)
+int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer)
 {
     // len = HASHLEN * nBlocks + nTrailing
     unsigned int nBlocks = keylen / HASHLEN;
@@ -42,7 +42,14 @@ int keygen(unsigned int keylen, FILE* fp)
         {
             sha256A(0, NULL, HASHLEN, buffer, buffer);
         }
-        fwrite(buffer, 1, HASHLEN, fp);
+        if(fp != NULL)
+        {
+            fwrite(buffer, 1, HASHLEN, fp);
+        }
+        if(passwordbuffer != NULL)
+        {
+            memcpy(passwordbuffer + HASHLEN * i, buffer, HASHLEN);
+        }
     }
 
     if(nTrailing > 0)
@@ -51,7 +58,14 @@ int keygen(unsigned int keylen, FILE* fp)
         {
             sha256A(0, NULL, HASHLEN, buffer, buffer);
         }
-        fwrite(buffer, 1, nTrailing, fp);
+        if(fp != NULL)
+        {
+            fwrite(buffer, 1, nTrailing, fp);
+        }
+        if(passwordbuffer != NULL)
+        {
+            memcpy(passwordbuffer + HASHLEN * nBlocks, buffer, nTrailing);
+        }
     }
 
     return 0;
