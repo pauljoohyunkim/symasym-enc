@@ -207,6 +207,12 @@ int main(int argc, char** argv)
 		free(inputKeyFileName);
 	}
 
+	// Integrated keygen mode
+	if(optP)
+	{
+		keygen(keylen, NULL, key);
+	}
+
 	// Input file opening
 	if((inputFile = fopen(inputFileName, "rb")) == NULL)
 	{

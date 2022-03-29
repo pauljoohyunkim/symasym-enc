@@ -74,7 +74,7 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    int keygen_status = keygenF(keylen, keyFile);
+    int keygen_status = keygen(keylen, keyFile, NULL);
     if(keygen_status == 1)      // Wrong password
     {
         fclose(keyFile);

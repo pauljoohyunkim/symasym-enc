@@ -9,8 +9,8 @@ symdec.bin: symdec.o aes.o hash.o aesbcm.o file.o
 symdec.o: decryptor/symdec.c decryptor/symdec.h
 	$(CC) $(CFLAGS) decryptor/symdec.c -c
 
-aesenc.bin: aesenc.o aesbcm.o aes.o hash.o file.o
-	$(CC) $(CFLAGS) aesenc.o aesbcm.o aes.o hash.o file.o -lcrypto -o aesenc.bin
+aesenc.bin: aesenc.o aesbcm.o aes.o hash.o file.o keygen.o
+	$(CC) $(CFLAGS) aesenc.o aesbcm.o aes.o hash.o file.o keygen.o -lcrypto -o aesenc.bin
 
 symkeygen.bin: symkeygen.o hash.o keygen.o
 	$(CC) $(CFLAGS) symkeygen.o hash.o keygen.o -lcrypto -o symkeygen.bin
