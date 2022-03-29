@@ -13,7 +13,7 @@
     This program works by taking the password from the user and generating SHA256 hashes.
 
     More specifically, given user input password (password), the key file generated would be:
-    h100(password) h200(password) h300(password) ... (truncated to the length specified.)
+    h101(password) h201(password) h301(password) ... (truncated to the length specified.)
     where hn(.) is applying SHA256 n times.
 */
 
@@ -30,8 +30,8 @@ int main(int argc, char** argv)
     {
         switch(opt)
         {
-            case 'l':
-                char *strptr;
+            case 'l': ;
+                char* strptr;
                 len = strtol(optarg, &strptr, 10);
                 break;
 
@@ -48,6 +48,16 @@ int main(int argc, char** argv)
         }
     }
 
+    unsigned int keyFileNameLen = 0;
+    char* keyFileName;
+    if(optind < argc)
+    {
+        printf("[INFO] Key file to be generated: %s\n",argv[optind]);
+        keyFileNameLen = strlen(argv[optind]);
+        keyFileName = (char*) calloc(keyFileNameLen + 2, sizeof(char));
+    }
+
+    
     // len = HASHLEN * nBlocks + nTrailing
     unsigned int nBlocks = len / HASHLEN;
     unsigned int nTrailing = len % HASHLEN;
@@ -59,6 +69,12 @@ int main(int argc, char** argv)
     getPassword(password1);
     printf("Enter the password again: ");
     getPassword(password2);
+
+    if(strcmp(password1,password2) != 0)
+    {
+        printf("[ERROR] Passwords do not match.\n");
+        return 1;
+    }
 
     
 
