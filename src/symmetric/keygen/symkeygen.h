@@ -5,6 +5,5 @@
 
 // Function declarations
 void showHelp();
-void getPassword(char *password);
 
 #endif
