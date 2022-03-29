@@ -313,6 +313,7 @@ void showHelp()
 		"\t-o <file>  : specify output file. (default: <input file>.aes)\n"
 		"\t-s         : skip password check during decryption.\n"
 		"\t-f         : do not include file integrity hash.\n"
+		"\t-h         : show help.\n"
 		"\n";
 	printf("%s",helpText);
 }

@@ -10,10 +10,6 @@
 #include "../misc/file.h"
 #include "../symmetric/aes/aesbcm.h"
 
-#define MAXKEYLEN 1000
-#define TMPBUFSIZ 512
-#define HASHLEN 32
-
 int main(int argc, char** argv)
 {
     int opt;
@@ -81,7 +77,7 @@ int main(int argc, char** argv)
 				return 1;
 			case '?':
 				printf("[ERROR] Unknown option: %c\n", optopt);
-				break;
+				return 1;
 
         }
     }
@@ -363,6 +359,7 @@ void showHelp()
 		"\t-o <file>  : specify output file. (default: <input file>.decrypted)\n"
 		"\t-s         : skip password check.\n"
 		"\t-f         : skip file integrity check at the end.\n"
+		"\t-h         : show help.\n"
 		"\n";
 	printf("%s",helpText);
 }

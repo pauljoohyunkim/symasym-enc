@@ -1,6 +1,8 @@
 #ifndef AESBCM_H
 #define AESBCM_H
 
+#include <stdint.h>
+#include <stdio.h>
 // Function declarations
 void iv16byte(uint8_t* iv);
 void counter_inc(uint8_t* counter);

@@ -1,6 +1,7 @@
 #ifndef AES_H
 #define AES_H
 
+#include <stdint.h>
 
 // Function declarations
 void rotword(uint8_t* word);
