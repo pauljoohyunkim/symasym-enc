@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include <stdint.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <string.h>
-#include <termios.h>
 
 #include "symkeygen.h"
-#include "../../misc/hash.h"
+#include "keygen.h"
 
 /*
     This program works by taking the password from the user and generating SHA256 hashes.
@@ -22,7 +20,7 @@
 int main(int argc, char** argv)
 {
     int opt;
-    unsigned int len = SIZE;
+    unsigned int keylen = DEFAULT_KEYLEN;
 
     // l: Length, h: Help
     bool optL = false, optH = false;
@@ -32,7 +30,7 @@ int main(int argc, char** argv)
         {
             case 'l': ;
                 char* strptr;
-                len = strtol(optarg, &strptr, 10);
+                keylen = strtol(optarg, &strptr, 10);
                 break;
 
             case 'h':
@@ -50,34 +48,41 @@ int main(int argc, char** argv)
 
     unsigned int keyFileNameLen = 0;
     char* keyFileName;
-    if(optind < argc)
+
+
+    if(optind < argc)       // key file argument is given.
     {
         printf("[INFO] Key file to be generated: %s\n",argv[optind]);
         keyFileNameLen = strlen(argv[optind]);
         keyFileName = (char*) calloc(keyFileNameLen + 2, sizeof(char));
+        strcpy(keyFileName, argv[optind]);
+    }
+    else
+    {
+        printf("[INFO] Key file to be generated: keyfile\n");
+        keyFileNameLen = strlen("keyfile");
+        keyFileName = (char*) calloc(keyFileNameLen + 2, sizeof(char));
+        strcpy(keyFileName, "keyfile");
     }
 
-    
-    // len = HASHLEN * nBlocks + nTrailing
-    unsigned int nBlocks = len / HASHLEN;
-    unsigned int nTrailing = len % HASHLEN;
-
-    char password1[SIZE] = { 0 };
-    char password2[SIZE] = { 0 };
-
-    printf("Enter the password: ");
-    getPassword(password1);
-    printf("Enter the password again: ");
-    getPassword(password2);
-
-    if(strcmp(password1,password2) != 0)
+    // Keyfile opening
+    FILE* keyFile = fopen(keyFileName, "wb");
+    if(keyFile == NULL)
     {
-        printf("[ERROR] Passwords do not match.\n");
+        printf("[ERROR] Key file could not be opened for writing.\n");
+        free(keyFileName);
+        return 1;
+    }
+    
+    int keygen_status = keygen(keylen, keyFile);
+    if(keygen_status == 1)      // Wrong password
+    {
+        fclose(keyFile);
+        free(keyFileName);
         return 1;
     }
 
-    
-
+    printf("[INFO] %u byte key file %s generated.\n", keylen, keyFileName);
     return 0;
 }
 
@@ -91,30 +96,8 @@ void showHelp()
 		"\n"
 		"\t-l <length>: specify the number of bytes. (default: 32)\n"
 		"\t-h         : show help.\n"
+        "\n"
+        " If <key file> argument is missing, it will be set to \"keyfile\" by default.\n"
 		"\n";
 	printf("%s",helpText);
-}
-
-
-// Silently get password into an array.
-// Source: https://stackoverflow.com/questions/1786532/c-command-line-password-input
-void getPassword(char *password)
-{
-    struct termios oldt, newt;
-    int i = 0;
-    int c;
-
-    tcgetattr(STDIN_FILENO, &oldt);         // Get the current terminal setting
-    newt = oldt;
-
-    newt.c_lflag &= ~(ECHO);                // Turn off echo
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);    // Set it to the new terminal setting
-
-    while((c = getchar()) != '\n' && c != EOF && i < SIZE)
-    {
-        password[i++] = c;
-    }
-
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);   // Turn it back to the old terminal setting
-    printf("\n");
 }
