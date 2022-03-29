@@ -3,6 +3,48 @@ This project is an extension of aes project, to accomodate other cryptographic a
 
 Note that these are created for proof of concept purposes, and you are welcome to study the code.
 It may not be the best to directly implement them. (It might be more efficient to use a professional library, such as openssl.)
+
+## Executables
+### aesenc (src/symmetric/aes/aesenc)
+ usage: aesenc [options]
+ Mandatory options:
+
+	-t <1,2,3> : AES type (1: AES-128, 2: AES-192, 3: AES-256)
+	-i <file>  : file to encrypt
+	-k <file>  : key file. Depending on the type, only the first few bytes will be used.
+	-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)
+	-b <mode>  : block cipher mode of operation; (ecb, cbc, ctr)
+
+ Common options:
+
+	-o <file>  : specify output file. (default: <input file>.aes)
+	-s         : skip password check during decryption.
+	-f         : do not include file integrity hash.
+	-h         : show help.
+
+### symkeygen (src/symmetric/keygen/symkeygen)
+ usage: symkeygen <key file>
+ Common options:
+
+	-l <length>: specify the number of bytes. (default: 32)
+	-h         : show help.
+
+ If <key file> argument is missing, it will be set to "keyfile" by default.
+
+### symdec (src/decryptor/symdec)
+ usage: symdec -i <input file> -k <key file> [options]
+ Mandatory options:
+
+	-i <file>  : file to decrypt
+	-k <file>  : key file. Depending on the type, only the first few bytes will be used.
+
+ Common options:
+
+	-o <file>  : specify output file. (default: <input file>.decrypted)
+	-s         : skip password check.
+	-f         : skip file integrity check at the end.
+	-h         : show help.
+
 ## Symmetric Encryption File Formats
 
 Encrypted files produced by the symmetric encryption programs will generally be in the following format. (Parts in round brackets may be missing based on the configuration.)
