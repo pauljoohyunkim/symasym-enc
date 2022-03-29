@@ -11,6 +11,7 @@
 #include "aesbcm.h"
 #include "../../misc/hash.h"
 #include "../../misc/file.h"
+#include "../keygen/keygen.h"
 
 int main(int argc, char** argv)
 {
@@ -41,6 +42,7 @@ int main(int argc, char** argv)
 	t: AES type* (1: AES128, 2: AES192, 3:AES256)
 	i: Input*
 	k: Key file*
+	p: Enter password instead of inputting a key file.* (Mutually exclusive with -k option.)
 	b: Block mode*
 	o: Output file
 	h: Help
@@ -53,8 +55,8 @@ int main(int argc, char** argv)
 	char* outputFileName;
 	uint8_t bcm;		//Block cipher mode of operation. (ecb = 0, cbc = 1, ctr = 2)
 
-	bool optT = false, optI = false, optK = false, optB = false, optO = false, optH = false, optS = false , optF = false;
-	while((opt = getopt(argc, argv, ":t:i:k:b:o:hsf")) != -1)
+	bool optT = false, optI = false, optK = false, optP = false, optB = false, optO = false, optH = false, optS = false , optF = false;
+	while((opt = getopt(argc, argv, ":t:i:k:pb:o:hsf")) != -1)
 	{
 		switch(opt)
 		{
@@ -97,6 +99,10 @@ int main(int argc, char** argv)
 				inputKeyFileName = (char*) malloc((strlen(optarg) + 1) * sizeof(char));
 				strcpy(inputKeyFileName, optarg);
 				printf("[INFO] Input key file: %s\n", inputKeyFileName); 
+				break;
+			case 'p':
+				optP = true;
+				printf("[INFO] Integrated keygen to be used.\n");
 				break;
 			case 'b':
 				optB = true;
@@ -154,9 +160,16 @@ int main(int argc, char** argv)
 
 
 	// Checking mandatory fields
-	if(!((optT && optI) && (optK && optB)))
+	if(!((optT && optI) && ((optK || optP) && optB)))
 	{
 		printf("[ERROR] One of the required options is missing.\n");
+		return 1;
+	}
+
+	// -k and -p are mutually exclusive.
+	if(optK && optP)
+	{
+		printf("[ERROR] Make up your mind! Use either -k or -p!\n");
 		return 1;
 	}
 
@@ -177,21 +190,23 @@ int main(int argc, char** argv)
 
 	uint8_t key[240] = { 0 };		// Zeroed out for padding.
 
-
-	// Key reading
-	if((keyFile = fopen(inputKeyFileName, "rb")) == NULL)
+	if(optK)
 	{
-		printf("[ERROR] Key file could not be read.\n");
-		return 1;
+		// Key reading
+		if((keyFile = fopen(inputKeyFileName, "rb")) == NULL)
+		{
+			printf("[ERROR] Key file could not be read.\n");
+			return 1;
+		}
+		read_bytes = fread(key, 1, keylen, keyFile);
+		if(read_bytes < keylen)
+		{
+			printf("[INFO] Key file was shorter than the length required by the specified AES type, so it was padded with zeros. Make sure you use the same key file for decryption.\n");
+		}	
+		fclose(keyFile);
+		free(inputKeyFileName);
 	}
-	read_bytes = fread(key, 1, keylen, keyFile);
-	if(read_bytes < keylen)
-	{
-		printf("[INFO] Key file was shorter than the length required by the specified AES type, so it was padded with zeros. Make sure you use the same key file for decryption.\n");
-	}	
-	fclose(keyFile);
-	free(inputKeyFileName);
-	
+
 	// Input file opening
 	if((inputFile = fopen(inputFileName, "rb")) == NULL)
 	{
@@ -299,13 +314,14 @@ void showHelp()
 {
 	char helpText[]
 		= "\n"
-		" usage: aesenc -t <1,2,3> -i <input file> -k <key file> -b <ecb, cbc, ctr> [options]"
+		" usage: aesenc [options]"
 		"\n"
 		" Mandatory options:\n"
 		"\n"
 		"\t-t <1,2,3> : AES type (1: AES-128, 2: AES-192, 3: AES-256)\n"
 		"\t-i <file>  : file to encrypt\n"
 		"\t-k <file>  : key file. Depending on the type, only the first few bytes will be used.\n"
+		"\t-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)\n"
 		"\t-b <mode>  : block cipher mode of operation; (ecb, cbc, ctr)\n"
 		"\n"
 		" Common options:\n"

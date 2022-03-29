@@ -9,7 +9,7 @@
 
 
 // Returns 1 if password does not match.
-int keygen(unsigned int keylen, FILE* fp)
+int keygenF(unsigned int keylen, FILE* fp)
 {
     // len = HASHLEN * nBlocks + nTrailing
     unsigned int nBlocks = keylen / HASHLEN;
