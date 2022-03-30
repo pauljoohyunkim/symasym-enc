@@ -6,8 +6,9 @@ It may not be the best to directly implement them. (It might be more efficient t
 
 ## Executables
 ### aesenc (src/symmetric/aes/aesenc)
- usage: aesenc [options]
- Mandatory options:
+usage: aesenc [options]
+
+Mandatory options:
 
 	-t <1,2,3> : AES type (1: AES-128, 2: AES-192, 3: AES-256)
 	-i <file>  : file to encrypt
@@ -15,7 +16,7 @@ It may not be the best to directly implement them. (It might be more efficient t
 	-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)
 	-b <mode>  : block cipher mode of operation; (ecb, cbc, ctr)
 
- Common options:
+Common options:
 
 	-o <file>  : specify output file. (default: <input file>.aes)
 	-s         : skip password check during decryption.
@@ -23,8 +24,9 @@ It may not be the best to directly implement them. (It might be more efficient t
 	-h         : show help.
 
 ### symkeygen (src/symmetric/keygen/symkeygen)
- usage: symkeygen <key file>
- Common options:
+usage: symkeygen <key file>
+
+Common options:
 
 	-l <length>: specify the number of bytes. (default: 32)
 	-h         : show help.
@@ -33,12 +35,13 @@ It may not be the best to directly implement them. (It might be more efficient t
 
 ### symdec (src/decryptor/symdec)
  usage: symdec -i <input file> -k <key file> [options]
- Mandatory options:
+
+Mandatory options:
 
 	-i <file>  : file to decrypt
 	-k <file>  : key file. Depending on the type, only the first few bytes will be used.
 
- Common options:
+Common options:
 
 	-o <file>  : specify output file. (default: <input file>.decrypted)
 	-s         : skip password check.

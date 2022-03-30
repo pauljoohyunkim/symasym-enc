@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g
+CFLAGS = -g -Wall
 
 all: aesenc.bin symdec.bin symkeygen.bin
 
