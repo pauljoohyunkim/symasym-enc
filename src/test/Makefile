@@ -48,7 +48,7 @@ test: aesenc.bin symdec.bin
 	./symdec.bin -i testoutput4 -k testkey
 
 testclean:
-	rm *.aes*
+	rm testoutput*
 
 
 clean:
