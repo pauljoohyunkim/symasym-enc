@@ -6,18 +6,18 @@
 #include "aes.h"
 #include "aesbcm.h"
 
-void iv16byte(uint8_t* iv)
+void ivbytes(uint8_t* iv, int length)
 {
     srandom(time(NULL));
-    for(int i = 0; i < 16; i++)
+    for(int i = 0; i < length; i++)
     {
         iv[i] = random() % 256;
     }
 }
 
-void counter_inc(uint8_t* counter)
+void counter_inc(uint8_t* counter, int length)
 {
-    for(int index = 15; index >= 0; index--)
+    for(int index = length - 1; index >= 0; index--)
     {
         if(counter[index] != 255)
         {
@@ -59,7 +59,6 @@ void ecb_aes_enc(uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* 
 void inv_ecb_aes_enc(uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* outputFile)
 {
     uint8_t buffer[16] = { 0 };
-    uint8_t clean_buffer[16] = { 0 };       //For potential last block
     
     int read_bytes = fread(buffer,1,16,inputFile);
 
@@ -112,7 +111,6 @@ void cbc_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* inpu
 void inv_cbc_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* inputFile, FILE* outputFile)
 {
     uint8_t buffer[16] = { 0 };
-    uint8_t clean_buffer[16] = { 0 };       //For potential last block
     uint8_t chain1[16] = { 0 };
     uint8_t chain2[16] = { 0 };
 
@@ -178,7 +176,7 @@ void ctr_aes_enc(uint8_t* iv, uint8_t* key, int n, int r, int nRound, FILE* inpu
             noncexorcounter[i] ^= buffer[i];
         }
         fwrite(noncexorcounter,1,16,outputFile);
-        counter_inc(counter);
+        counter_inc(counter, 16);
         read_bytes = fread(buffer,1,16,inputFile);
     }
 

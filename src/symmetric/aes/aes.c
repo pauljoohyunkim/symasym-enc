@@ -405,8 +405,28 @@ void imult(uint8_t* buffer)
 
 // nRound = 10,12,14 for AES128, AES192, AES256 resp.
 // n, r as given before in aes_key_schedule
-void aes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound)
+void aes(uint8_t* key, uint8_t* buffer, int configuration_num)
 {
+    int n, r, nRound;
+    switch(configuration_num)
+    {
+        case 1:
+            n = 4;
+            r = 11;
+            nRound = 10;
+            break;
+        case 2:
+            n = 6;
+            r = 13;
+            nRound = 12;
+            break;
+        case 3:
+            n = 8;
+            r = 15;
+            nRound = 14;
+            break;
+    }
+
 	// Key scheduling
 	aes_key_schedule(n, key, r);
 	
@@ -429,8 +449,28 @@ void aes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound)
 }
 
 // Inverse aes
-void invaes(uint8_t* key, uint8_t* buffer, int n, int r, int nRound)
+void invaes(uint8_t* key, uint8_t* buffer, int configuration_num)
 {
+    int n, r, nRound;
+    switch(configuration_num)
+    {
+        case 1:
+            n = 4;
+            r = 11;
+            nRound = 10;
+            break;
+        case 2:
+            n = 6;
+            r = 13;
+            nRound = 12;
+            break;
+        case 3:
+            n = 8;
+            r = 15;
+            nRound = 14;
+            break;
+    }
+
     // Key scheduling
     aes_key_schedule(n, key, r);
 

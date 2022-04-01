@@ -3,14 +3,14 @@ CFLAGS = -g -Wall
 
 all: aesenc.bin symdec.bin symkeygen.bin
 
-symdec.bin: symdec.o aes.o hash.o aesbcm.o file.o keygen.o
-	$(CC) $(CFLAGS) symdec.o aes.o hash.o aesbcm.o file.o keygen.o -lcrypto -o symdec.bin
+symdec.bin: symdec.o aes.o hash.o bcm.o file.o keygen.o
+	$(CC) $(CFLAGS) symdec.o aes.o hash.o bcm.o file.o keygen.o -lcrypto -o symdec.bin
 
 symdec.o: decryptor/symdec.c decryptor/symdec.h
 	$(CC) $(CFLAGS) decryptor/symdec.c -c
 
-aesenc.bin: aesenc.o aesbcm.o aes.o hash.o file.o keygen.o
-	$(CC) $(CFLAGS) aesenc.o aesbcm.o aes.o hash.o file.o keygen.o -lcrypto -o aesenc.bin
+aesenc.bin: aesenc.o bcm.o aes.o hash.o file.o keygen.o
+	$(CC) $(CFLAGS) aesenc.o bcm.o aes.o hash.o file.o keygen.o -lcrypto -o aesenc.bin
 
 symkeygen.bin: symkeygen.o hash.o keygen.o
 	$(CC) $(CFLAGS) symkeygen.o hash.o keygen.o -lcrypto -o symkeygen.bin
@@ -24,8 +24,8 @@ keygen.o: keygen/keygen.c keygen/keygen.h
 aesenc.o: aes/aesenc.c aes/aesenc.h
 	$(CC) $(CFLAGS) aes/aesenc.c -c
 
-aesbcm.o: aes/aesbcm.c aes/aesbcm.h
-	$(CC) $(CFLAGS) aes/aesbcm.c -c
+bcm.o: bcm/bcm.c bcm/bcm.h
+	$(CC) $(CFLAGS) bcm/bcm.c -c
 
 aes.o: aes/aes.c aes/aes.h
 	$(CC) $(CFLAGS) aes/aes.c -c
@@ -38,14 +38,14 @@ file.o: misc/file.c misc/file.h
 
 
 test: aesenc.bin symdec.bin
-	./aesenc.bin -i testinput1 -t 3 -k testkey -b ctr
-	./aesenc.bin -i testinput2 -t 3 -k testkey -b ctr
-	./aesenc.bin -i testinput3 -t 2 -k testkey -b ctr
-	./aesenc.bin -i testinput4 -t 2 -k testkey -b ctr
-	./symdec.bin -i testinput1.aes -k testkey
-	./symdec.bin -i testinput2.aes -k testkey
-	./symdec.bin -i testinput3.aes -k testkey
-	./symdec.bin -i testinput4.aes -k testkey
+	./aesenc.bin -i testinput -t 1 -k testkey -b ecb -o testoutput1
+	./aesenc.bin -i testinput -t 2 -k testkey -b cbc -o testoutput2
+	./aesenc.bin -i testinput -t 3 -k testkey -b ctr -o testoutput3
+	./aesenc.bin -i testinput -t 2 -k testkey -b ctr -o testoutput4
+	./symdec.bin -i testoutput1 -k testkey
+	./symdec.bin -i testoutput2 -k testkey
+	./symdec.bin -i testoutput3 -k testkey
+	./symdec.bin -i testoutput4 -k testkey
 
 testclean:
 	rm *.aes*
