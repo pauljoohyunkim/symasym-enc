@@ -8,7 +8,9 @@
 #include "symdec.h"
 #include "../misc/hash.h"
 #include "../misc/file.h"
-#include "../symmetric/aes/aesbcm.h"
+//#include "../symmetric/aes/aesbcm.h"
+#include "../symmetric/aes/aes.h"
+#include "../symmetric/bcm/bcm.h"
 #include "../symmetric/keygen/keygen.h"
 
 int main(int argc, char** argv)
@@ -200,6 +202,8 @@ int main(int argc, char** argv)
 
 	unsigned int stuffing = 0;	// Number of needed bytes for a full block for block ciphers	
 
+	int configuration_num;		// These were used to specify which version of a specific algorithm.
+
 	// More extensive case tree coming up...
 	// For each option, tempbuffer holds information that are relevant.
 	switch(header[1])		//README: A
@@ -215,18 +219,21 @@ int main(int argc, char** argv)
 					tempbuffer[0] = 4;
 					tempbuffer[1] = 11;
 					tempbuffer[2] = 10;
+					configuration_num = 1;
 					printf("[INFO] AES-128 detected.\n");
 					break;
 				case 0x01:
 					tempbuffer[0] = 6;
 					tempbuffer[1] = 13;
 					tempbuffer[2] = 12;
+					configuration_num = 2;
 					printf("[INFO] AES-192 detected.\n");
 					break;
 				case 0x02:
 					tempbuffer[0] = 8;
 					tempbuffer[1] = 15;
 					tempbuffer[2] = 14;
+					configuration_num = 3;
 					printf("[INFO] AES-256 detected.\n");
 					break;
 				default:
@@ -282,17 +289,21 @@ int main(int argc, char** argv)
 				case 0b00000:			//ECB
 					fread(&stuffing, 1, 1, inputFile);
 					printf("[INFO] ECB mode detected.\n");
-					inv_ecb_aes_enc(key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
+					ecb_dec(key, 16, inputFile, outputFile, configuration_num, invaes);
+					//inv_ecb_aes_enc(key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
 					break;
+				
 				case 0b00001:			//CBC
 					fread(&stuffing, 1, 1, inputFile);
 					printf("[INFO] CBC mode detected.\n");
-					inv_cbc_aes_enc(iv, key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
+					cbc_dec(iv, key, 16, inputFile, outputFile, configuration_num, invaes);
+					//inv_cbc_aes_enc(iv, key, tempbuffer[0], tempbuffer[1], tempbuffer[2],inputFile, outputFile);
 					break;
 				case 0b00010:			//CTR
 					//No stuffing for CTR
 					printf("[INFO] CTR mode detected.\n");
-					ctr_aes_enc(iv, key, tempbuffer[0], tempbuffer[1], tempbuffer[2], inputFile, outputFile);
+					ctr_enc(iv, key, 16, inputFile, outputFile, configuration_num, aes);
+					//ctr_aes_enc(iv, key, tempbuffer[0], tempbuffer[1], tempbuffer[2], inputFile, outputFile);
 					break;
 				default:
 					printf("[ERROR] Unknown block cipher mode of operation.\n");

@@ -8,7 +8,8 @@
 
 #include "aes.h"
 #include "aesenc.h"
-#include "aesbcm.h"
+//#include "aesbcm.h"
+#include "../bcm/bcm.h"
 #include "../../misc/hash.h"
 #include "../../misc/file.h"
 #include "../keygen/keygen.h"
@@ -34,6 +35,7 @@ int main(int argc, char** argv)
 	int r;
 	int nRound;
 	int keylen;			//keylen = 4 * n
+	int configuration_num;		// 1 for AES128, 2 for AES192, 3 for AES256
 
 	// Options
 	/*
@@ -69,18 +71,21 @@ int main(int argc, char** argv)
 						n = 4;
 						r = 11;
 						nRound = 10;
+						configuration_num = 1;
 						break;
 					case '2':
 						printf("[INFO] AES-192 selected.\n");
 						n = 6;
 						r = 13;
 						nRound = 12;
+						configuration_num = 2;
 						break;
 					case '3':
 						printf("[INFO] AES-256 selected.\n");
 						n = 8;
 						r = 15;
 						nRound = 14;
+						configuration_num = 3;
 						break;
 					default:
 						printf("[ERROR] Unknown AES mode.\n");
@@ -266,7 +271,7 @@ int main(int argc, char** argv)
 
 	//Initialization Vector (Does not exist if ECB.)
 	uint8_t iv[16];
-	iv16byte(iv);		//IV generation
+	ivbytes(iv,16);		//IV generation
 	fwrite(iv,1,16,outputFile);
 	
 
@@ -294,17 +299,18 @@ int main(int argc, char** argv)
 		case 0:
 			//ECB
 			fwrite(&stuffing, 1, 1, outputFile);
-			ecb_aes_enc(key, n, r, nRound, inputFile, outputFile);
+			ecb_enc(key, 16, inputFile, outputFile, configuration_num, aes);
 			break;
 		case 1:
 			//CBC
 			fwrite(&stuffing, 1, 1, outputFile);
-			cbc_aes_enc(iv, key, n, r, nRound, inputFile, outputFile);
+			cbc_enc(iv, key, 16, inputFile, outputFile, configuration_num, aes);
 			break;
 		case 2:
 			//CTR
-			ctr_aes_enc(iv, key, n, r, nRound, inputFile, outputFile);
+			ctr_enc(iv, key, 16, inputFile, outputFile, configuration_num, aes);
 			break;
+		
 	}
 
 
