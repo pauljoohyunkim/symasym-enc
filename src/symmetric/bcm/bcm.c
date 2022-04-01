@@ -103,7 +103,7 @@ void cbc_enc(uint8_t* iv, uint8_t* key, int blocklen, FILE* inputFile, FILE* out
     memcpy(chain, iv, blocklen);
 
     //Reading and xoring
-    int read_bytes = fread(buffer,1,16,inputFile);
+    int read_bytes = fread(buffer,1,blocklen,inputFile);
     while(read_bytes == blocklen)
     {
         for(int i = 0; i < blocklen; i++)

@@ -302,7 +302,7 @@ int main(int argc, char** argv)
 				case 0b00010:			//CTR
 					//No stuffing for CTR
 					printf("[INFO] CTR mode detected.\n");
-					ctr_enc(iv, key, 16, inputFile, outputFile, aes);
+					ctr_enc(iv, key, 16, inputFile, outputFile, configuration_num, aes);
 					//ctr_aes_enc(iv, key, tempbuffer[0], tempbuffer[1], tempbuffer[2], inputFile, outputFile);
 					break;
 				default:
