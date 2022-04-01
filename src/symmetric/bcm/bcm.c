@@ -110,7 +110,7 @@ void cbc_enc(uint8_t* iv, uint8_t* key, int blocklen, FILE* inputFile, FILE* out
         {
             buffer[i] ^= chain[i];
         }
-        (*encfun)(key, clean_buffer, configuration_num);
+        (*encfun)(key, buffer, configuration_num);
         //aes(key,buffer, n, r, nRound);
         fwrite(buffer, 1, blocklen, outputFile);
         memcpy(chain, buffer, blocklen);
@@ -202,7 +202,7 @@ void ctr_enc(uint8_t* iv, uint8_t* key, int blocklen, FILE* inputFile, FILE* out
         {
             noncexorcounter[i] = iv[i] ^ counter[i];
         }
-        (*encfun)(key, buffer, configuration_num);
+        (*encfun)(key, noncexorcounter, configuration_num);
         for(int i = 0; i < blocklen; i++)
         {
             noncexorcounter[i] ^= buffer[i];
@@ -219,7 +219,7 @@ void ctr_enc(uint8_t* iv, uint8_t* key, int blocklen, FILE* inputFile, FILE* out
         {
             noncexorcounter[i] = iv[i] ^ counter[i];
         }
-        (*encfun)(key, buffer, configuration_num);
+        (*encfun)(key, noncexorcounter, configuration_num);
         for(int i = 0; i < blocklen; i++)
         {
             noncexorcounter[i] ^= buffer[i];
