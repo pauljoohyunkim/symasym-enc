@@ -52,11 +52,12 @@ Common options:
 
 Encrypted files produced by the symmetric encryption programs will generally be in the following format. (Parts in round brackets may be missing based on the configuration.)
 
-0x00 A B C [.] (*) (^) [%] [Cipher text]
+0x00 A (B) C [.] (*) (^) [%] [Cipher text]
 
 * A
     * 0x00: AES
     * 0x01: Blowfish
+	* 0x02: Hill
 
 * B: types of A (eg. AES-128)
 
@@ -84,3 +85,17 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * Rest are set to zero.
 * [.]: 16 byte IV
 * [%]: One byte reserved for signalling how many bytes from the end to get rid of after decryption. (Missing if CTR mode)
+
+### Blowfish
+(Currently under construction)
+
+### Hill
+(Currently under construction)
+NOTE: NEITHER PRACTICAL NOR RECOMMENDED
+
+This is an extended implementation of hill cipher, which traditionally uses mod 26, but here we use mod 256 to accomodate any file.
+
+0x00 0x02 C [.] (*) (^) [%] [Cipher text]
+* B is missing.
+
+
