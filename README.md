@@ -52,7 +52,7 @@ Common options:
 
 Encrypted files produced by the symmetric encryption programs will generally be in the following format. (Parts in round brackets may be missing based on the configuration.)
 
-0x00 A (B) C [.] (*) (^) [%] [Cipher text]
+0x00 A B C [.] (*) (^) [%] [Cipher text]
 
 * A
     * 0x00: AES
@@ -93,9 +93,9 @@ Encrypted files produced by the symmetric encryption programs will generally be 
 (Currently under construction)
 NOTE: NEITHER PRACTICAL NOR RECOMMENDED
 
-This is an extended implementation of hill cipher, which traditionally uses mod 26, but here we use mod 256 to accomodate any file.
+This is an implementation of hill cipher in mod 256, instead of traditionally used mod 26.
 
-0x00 0x02 C [.] (*) (^) [%] [Cipher text]
-* B is missing.
+0x00 0x02 0x00 C [.] (*) (^) [%] [Cipher text]
+* B is set to zero for 4-byte header format.
 
 

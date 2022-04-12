@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hill.h"
+#include "../../misc/hash.h"
 #include "../../misc/linalg.h"
 
 // configuration_num = sqrt(keylen)
@@ -53,3 +54,28 @@ void hill(uint8_t* key, uint8_t* buffer, int configuration_num)
 
 }
 
+// Hill cipher needs an invertible matrix. Seed generates an invertible matrix.
+void hill_keygen(uint8_t* seed, int seedlen, int n, uint8_t* keydest)
+{
+    uint8_t** tempmat;
+    tempmat = (uint8_t**) calloc(sizeof(uint8_t*), n);
+    for(int i = 0; i < n; i++)
+    {
+        tempmat[i] = (uint8_t*) calloc(sizeof(uint8_t), n);
+    }
+
+    uint8_t* tempkey;
+    tempkey = (uint8_t*) calloc(sizeof(tempkey), n * n);
+    
+    
+
+
+
+    // Garbage Collection
+    free(tempkey);
+    for(int i = 0; i < n; i++)
+    {
+        free(tempmat[i]);
+    }
+    free(tempmat);
+}

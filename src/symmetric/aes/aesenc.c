@@ -8,7 +8,6 @@
 
 #include "aes.h"
 #include "aesenc.h"
-//#include "aesbcm.h"
 #include "../bcm/bcm.h"
 #include "../../misc/hash.h"
 #include "../../misc/file.h"
