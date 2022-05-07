@@ -1,4 +1,3 @@
-src/symmetric/aes/aesenc
 src/test/*.o
 src/test/*.bin
 src/test/test*
