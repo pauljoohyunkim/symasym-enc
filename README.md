@@ -4,6 +4,18 @@ This project is an extension of aes project, to accomodate other cryptographic a
 Note that these are created for proof of concept purposes, and you are welcome to study the code.
 It may not be the best to directly implement them. (It might be more efficient to use a professional library, such as openssl.)
 
+## Requirements
+You need openssl development package in order to compile the binaries requiring SHA256 hashes.
+Support for systems without openssl development packages may be added in the future.
+
+In order to install openssl development package, issue the following command:
+> #For Debian-based systems
+> sudo apt-get install libssl-dev
+> 
+> #For Arch-based systems
+> sudo pacman -S libssl-dev
+
+
 ## Executables
 ### aesenc (src/symmetric/aes/aesenc)
 usage: aesenc [options]
