@@ -10,9 +10,11 @@ Support for systems without openssl development packages may be added in the fut
 
 In order to install openssl development package, issue the following command:
 > #For Debian-based systems
+>
 > sudo apt-get install libssl-dev
 > 
 > #For Arch-based systems
+>
 > sudo pacman -S libssl-dev
 
 
