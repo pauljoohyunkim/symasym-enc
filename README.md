@@ -45,7 +45,7 @@ Common options:
 	-l <length>: specify the number of bytes. (default: 32)
 	-h         : show help.
 
- If <key file> argument is missing, it will be set to "keyfile" by default.
+ If "key file" argument is missing, it will be set to "keyfile" by default.
 
 ### symdec (src/decryptor/symdec)
  usage: symdec -i <input file> -k <key file> [options]
