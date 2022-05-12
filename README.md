@@ -1,5 +1,5 @@
 # symasym-enc
-This project is an extension of aes project, to accomodate other cryptographic algorithms quickly for encrypting files.
+This project is an extension of aes project, to accommodate other cryptographic algorithms quickly for encrypting files.
 
 Note that these are created for proof of concept purposes, and you are welcome to study the code.
 It may not be the best to directly implement them. (It might be more efficient to use a professional library, such as openssl.)
