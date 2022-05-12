@@ -89,13 +89,5 @@ Encrypted files produced by the symmetric encryption programs will generally be 
 ### Blowfish
 (Currently under construction)
 
-### Hill
-(Currently under construction)
-NOTE: NEITHER PRACTICAL NOR RECOMMENDED
-
-This is an implementation of hill cipher in mod 256, instead of traditionally used mod 26.
-
-0x00 0x02 0x00 C [.] (*) (^) [%] [Cipher text]
-* B is set to zero for 4-byte header format.
 
 
