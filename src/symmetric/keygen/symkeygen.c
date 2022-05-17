@@ -23,7 +23,6 @@ int main(int argc, char** argv)
     unsigned int keylen = DEFAULT_KEYLEN;
 
     // l: Length, h: Help
-    bool optL = false, optH = false;
     while((opt = getopt(argc, argv, ":l:h")) != -1)
     {
         switch(opt)
