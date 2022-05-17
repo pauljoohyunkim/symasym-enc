@@ -335,7 +335,6 @@ int main(int argc, char** argv)
 	//Truncation
 	if(stuffing > 0)
 	{
-		uintmax_t filesize = sizeN(outputFileName);
 		truncate(outputFileName,sizeN(outputFileName) - stuffing);
 	}
 
