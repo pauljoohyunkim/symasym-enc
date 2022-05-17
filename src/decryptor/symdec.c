@@ -383,6 +383,7 @@ void showHelp()
 		"\n"
 		"\t-i <file>  : file to decrypt\n"
 		"\t-k <file>  : key file. Depending on the type, only the first few bytes will be used.\n"
+		"\t-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)\n"
 		"\n"
 		" Common options:\n"
 		"\n"

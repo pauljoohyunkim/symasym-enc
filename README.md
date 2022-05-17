@@ -38,7 +38,7 @@ Common options:
 	-h         : show help.
 
 ### symkeygen (src/symmetric/keygen/symkeygen)
-usage: symkeygen <key file>
+usage: symkeygen [key file]
 
 Common options:
 
@@ -48,12 +48,13 @@ Common options:
  If "key file" argument is missing, it will be set to "keyfile" by default.
 
 ### symdec (src/decryptor/symdec)
- usage: symdec -i <input file> -k <key file> [options]
+ usage: symdec -i [input file] -k [key file] [options]
 
 Mandatory options:
 
 	-i <file>  : file to decrypt
 	-k <file>  : key file. Depending on the type, only the first few bytes will be used.
+	-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)
 
 Common options:
 
