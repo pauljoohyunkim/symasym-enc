@@ -36,6 +36,9 @@ hash.o: misc/hash.c misc/hash.h
 file.o: misc/file.c misc/file.h
 	$(CC) $(CFLAGS) misc/file.c -c
 
+testgen:
+	head -c 54 /dev/urandom > testinput
+	head -c 32 /dev/urandom > testkey
 
 test: aesenc.bin symdec.bin
 	./aesenc.bin -i testinput -t 1 -k testkey -b ecb -o testoutput1
@@ -48,7 +51,8 @@ test: aesenc.bin symdec.bin
 	./symdec.bin -i testoutput4 -k testkey
 
 testclean:
-	rm testoutput*
+	rm test*
+
 
 
 clean:

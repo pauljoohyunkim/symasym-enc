@@ -8,7 +8,6 @@
 
 #include "aes.h"
 #include "aesenc.h"
-//#include "aesbcm.h"
 #include "../bcm/bcm.h"
 #include "../../misc/hash.h"
 #include "../../misc/file.h"
@@ -32,8 +31,6 @@ int main(int argc, char** argv)
 	keylen = 16,24,32 for AES128, AES192, AES256 resp.
 	*/
 	int n;
-	int r;
-	int nRound;
 	int keylen;			//keylen = 4 * n
 	int configuration_num;		// 1 for AES128, 2 for AES192, 3 for AES256
 
@@ -57,7 +54,7 @@ int main(int argc, char** argv)
 	char* outputFileName;
 	uint8_t bcm;		//Block cipher mode of operation. (ecb = 0, cbc = 1, ctr = 2)
 
-	bool optT = false, optI = false, optK = false, optP = false, optB = false, optO = false, optH = false, optS = false , optF = false;
+	bool optT = false, optI = false, optK = false, optP = false, optB = false, optO = false, optS = false , optF = false;
 	while((opt = getopt(argc, argv, ":t:i:k:pb:o:hsf")) != -1)
 	{
 		switch(opt)
@@ -69,22 +66,16 @@ int main(int argc, char** argv)
 					case '1':
 						printf("[INFO] AES-128 selected.\n");
 						n = 4;
-						r = 11;
-						nRound = 10;
 						configuration_num = 1;
 						break;
 					case '2':
 						printf("[INFO] AES-192 selected.\n");
 						n = 6;
-						r = 13;
-						nRound = 12;
 						configuration_num = 2;
 						break;
 					case '3':
 						printf("[INFO] AES-256 selected.\n");
 						n = 8;
-						r = 15;
-						nRound = 14;
 						configuration_num = 3;
 						break;
 					default:
@@ -140,8 +131,6 @@ int main(int argc, char** argv)
 				printf("[INFO] Output file: %s\n", outputFileName);
 				break;
 			case 'h':
-				optH = true;
-	
 				printf("[INFO] Showing help...\n\n");
 				showHelp();
 				return 0;

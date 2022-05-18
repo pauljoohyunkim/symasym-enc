@@ -1,10 +1,25 @@
 # symasym-enc
+
 Tools from this repository can be used to encrypt files using various encryption methods.
 
 This project is an extension of aes project, to accomodate other cryptographic algorithms quickly for encrypting files.
 
 Note that these are created for proof of concept purposes, and you are welcome to study the code.
 It may not be the best to directly implement them, as it is obviously not going to be most polished or efficient. (It might be more efficient to use a professional library, such as openssl.)
+
+## Requirements
+You need openssl development package in order to compile the binaries requiring SHA256 hashes.
+Support for systems without openssl development packages may be added in the future.
+
+In order to install openssl development package, issue the following command:
+### For Debian-based systems
+>
+> sudo apt-get install libssl-dev
+>
+### For Arch-based systems
+>
+> sudo pacman -S libssl-dev
+>
 
 ## Executables
 ### aesenc (src/symmetric/aes/aesenc)
@@ -26,22 +41,23 @@ Common options:
 	-h         : show help.
 
 ### symkeygen (src/symmetric/keygen/symkeygen)
-usage: symkeygen <key file>
+usage: symkeygen [key file]
 
 Common options:
 
 	-l <length>: specify the number of bytes. (default: 32)
 	-h         : show help.
 
- If <key file> argument is missing, it will be set to "keyfile" by default.
+ If "key file" argument is missing, it will be set to "keyfile" by default.
 
 ### symdec (src/decryptor/symdec)
- usage: symdec -i <input file> -k <key file> [options]
+ usage: symdec -i [input file] -k [key file] [options]
 
 Mandatory options:
 
 	-i <file>  : file to decrypt
 	-k <file>  : key file. Depending on the type, only the first few bytes will be used.
+	-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)
 
 Common options:
 
@@ -59,6 +75,7 @@ Encrypted files produced by the symmetric encryption programs will generally be 
 * A
     * 0x00: AES
     * 0x01: Blowfish
+	* 0x02: Hill
 
 * B: types of A (eg. AES-128)
 
@@ -86,3 +103,9 @@ Encrypted files produced by the symmetric encryption programs will generally be 
     * Rest are set to zero.
 * [.]: 16 byte IV
 * [%]: One byte reserved for signalling how many bytes from the end to get rid of after decryption. (Missing if CTR mode)
+
+### Blowfish
+(Currently under construction)
+
+
+

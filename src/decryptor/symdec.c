@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     f: Skip file integrity check (not relevant when file integrity hash is not included.)
 
     */
-    bool optI = false, optK = false, optP = false, optO = false, optH = false, optS = false, optF = false;
+    bool optI = false, optK = false, optP = false, optO = false, optS = false, optF = false;
     while((opt = getopt(argc, argv, ":i:k:po:hsf")) != -1)
     {
         switch(opt)
@@ -63,8 +63,6 @@ int main(int argc, char** argv)
 				break;
             
 			case 'h':
-				optH = true;
-	
 				printf("[INFO] Showing help...\n\n");
 				showHelp();
 				return 0;
@@ -180,8 +178,6 @@ int main(int argc, char** argv)
 
 	bool passhash_included = true;
 	bool file_integrity_included = true;
-	bool to_read_passhash = true;
-	bool to_read_file_integrity = true;
 
 	//SHA256 hashes
 	uint8_t passhash_read[HASHLEN];
@@ -339,7 +335,6 @@ int main(int argc, char** argv)
 	//Truncation
 	if(stuffing > 0)
 	{
-		uintmax_t filesize = sizeN(outputFileName);
 		truncate(outputFileName,sizeN(outputFileName) - stuffing);
 	}
 
@@ -383,6 +378,7 @@ void showHelp()
 		"\n"
 		"\t-i <file>  : file to decrypt\n"
 		"\t-k <file>  : key file. Depending on the type, only the first few bytes will be used.\n"
+		"\t-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)\n"
 		"\n"
 		" Common options:\n"
 		"\n"
