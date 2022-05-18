@@ -15,4 +15,4 @@ symdec_SOURCES = src/decryptor/symdec.c \
 		 src/symmetric/bcm/bcm.c \
 		 src/symmetric/keygen/keygen.c
 SUBDIRS = src
-
+AUTOMAKE_OPTIONS = foreign subdir-objects
