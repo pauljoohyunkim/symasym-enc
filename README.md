@@ -1,8 +1,11 @@
 # symasym-enc
-This project is an extension of aes project, to accommodate other cryptographic algorithms quickly for encrypting files.
+
+Tools from this repository can be used to encrypt files using various encryption methods.
+
+This project is an extension of aes project, to accomodate other cryptographic algorithms quickly for encrypting files.
 
 Note that these are created for proof of concept purposes, and you are welcome to study the code.
-It may not be the best to directly implement them. (It might be more efficient to use a professional library, such as openssl.)
+It may not be the best to directly implement them, as it is obviously not going to be most polished or efficient. (It might be more efficient to use a professional library, such as openssl.)
 
 ## Requirements
 You need openssl development package in order to compile the binaries requiring SHA256 hashes.

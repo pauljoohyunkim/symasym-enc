@@ -2,6 +2,6 @@
 #define BLOWFISH_H
 
 // Function declarations
-void blowfish(uint8_t* key, uint8_t* buffer);
+void blowfish(uint8_t* key, uint8_t* buffer, int configuration_num);
 
 #endif
