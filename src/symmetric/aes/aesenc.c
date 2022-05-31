@@ -308,6 +308,26 @@ int main(int argc, char** argv)
 	fclose(outputFile);
 
 	printf("[INFO] Finished.\n");
+	
+	// Ask whether to delete the input file or not.
+	printf("Delete the input file?\n");
+	char deleteprompt = getchar();
+	if(deleteprompt == 'y' || deleteprompt == 'Y')
+	{
+		remove(inputFileName);
+		printf("[INFO] Input file removed.\n");
+	}
+	else
+	{
+		printf("[INFO] Input file not removed.\n");
+	}
+	
+
+	// Free names
+	free(inputFileName);
+	free(outputFileName);
+
+
 	return 0;
 }
 
