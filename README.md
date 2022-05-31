@@ -45,21 +45,21 @@ usage: aesenc [options]
 
 Mandatory options:
 
--t <1,2,3> : AES type (1: AES-128, 2: AES-192, 3: AES-256)
--i <file>  : file to encrypt
--k <file>  : key file. Depending on the type, only the first few bytes will be used.
--p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)
--b <mode>  : block cipher mode of operation; (ecb, cbc, ctr)
+	-t <1,2,3> : AES type (1: AES-128, 2: AES-192, 3: AES-256)
+	-i <file>  : file to encrypt
+	-k <file>  : key file. Depending on the type, only the first few bytes will be used.
+	-p         : use integrated keygen instead of a key file. (Mutually exclusive with -k option)
+	-b <mode>  : block cipher mode of operation; (ecb, cbc, ctr)
 
 Common options:
 
--o <file>  : specify output file. (default: <input file>.aes)
--s         : skip password check during decryption.
--f         : do not include file integrity hash.
--d         : Delete file after encryption.
--n         : Do not delete the file after encryption. (Mutually exclusive with -d option.)
-	     (If neither -d nor -n option is used, then you will be prompted.)
--h         : show help.
+	-o <file>  : specify output file. (default: <input file>.aes)
+	-s         : skip password check during decryption.
+	-f         : do not include file integrity hash.
+	-d         : Delete file after encryption.
+	-n         : Do not delete the file after encryption. (Mutually exclusive with -d option.)
+		     (If neither -d nor -n option is used, then you will be prompted.)
+	-h         : show help.
 
 ### symkeygen (src/symmetric/keygen/symkeygen)
 usage: symkeygen [key file]
