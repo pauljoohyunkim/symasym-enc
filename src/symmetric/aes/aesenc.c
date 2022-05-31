@@ -47,6 +47,9 @@ int main(int argc, char** argv)
 	h: Help
 	s: Password check skip
 	f: File integrity check skip
+	d: Delete file after encryption.
+	n: Do not delete the file after encryption. (Mutually exclusive with -d option.)
+	(If neither -d nor -n option is used, then you will be prompted.)
 	*/
 
 	char* inputFileName;
@@ -54,8 +57,8 @@ int main(int argc, char** argv)
 	char* outputFileName;
 	uint8_t bcm;		//Block cipher mode of operation. (ecb = 0, cbc = 1, ctr = 2)
 
-	bool optT = false, optI = false, optK = false, optP = false, optB = false, optO = false, optS = false , optF = false;
-	while((opt = getopt(argc, argv, ":t:i:k:pb:o:hsf")) != -1)
+	bool optT = false, optI = false, optK = false, optP = false, optB = false, optO = false, optS = false , optF = false, optD = false, optN = false;
+	while((opt = getopt(argc, argv, ":t:i:k:pb:o:hsfdn")) != -1)
 	{
 		switch(opt)
 		{
@@ -142,6 +145,14 @@ int main(int argc, char** argv)
 			case 'f':
 				optF = true;
 				printf("[INFO] File integrity hash will not be included.\n");
+				break;
+			case 'd':
+				optD = true;
+				printf("[INFO] Input file is set to be deleted after encryption.\n");
+				break;
+			case 'n':
+				optN = true;
+				printf("[INFO] Input file is set not to be deleted after encryption.\n");
 				break;
 			case ':':
 				printf("[ERROR] An option needs a value.\n");
@@ -308,6 +319,40 @@ int main(int argc, char** argv)
 	fclose(outputFile);
 
 	printf("[INFO] Finished.\n");
+
+
+
+	// Ask whether to delete the input file or not.
+	// Question only triggered when indeterminant.
+	if(optD == optN)
+	{
+		printf("Delete the input file? [y/N]\n");
+		char deleteprompt = getchar();
+		if(deleteprompt == 'y' || deleteprompt == 'Y')
+		{
+			remove(inputFileName);
+			printf("[INFO] Input file removed.\n");
+		}
+		else
+		{
+			printf("[INFO] Input file not removed.\n");
+		}
+	}
+	else if (optD)
+	{
+		remove(inputFileName);
+		printf("[INFO] Input file removed.\n");
+	}
+	else if (optN)
+	{
+		printf("[INFO] Input file not removed.\n");
+	}
+
+	// Free names
+	free(inputFileName);
+	free(outputFileName);
+
+
 	return 0;
 }
 
@@ -330,6 +375,9 @@ void showHelp()
 		"\t-o <file>  : specify output file. (default: <input file>.aes)\n"
 		"\t-s         : skip password check during decryption.\n"
 		"\t-f         : do not include file integrity hash.\n"
+		"\t-d         : Delete file after encryption.\n"
+		"\t-n         : Do not delete the file after encryption. (Mutually exclusive with -d option.)\n"
+		"\t             (If neither -d nor -n option is used, then you will be prompted.)\n"
 		"\t-h         : show help.\n"
 		"\n";
 	printf("%s",helpText);
