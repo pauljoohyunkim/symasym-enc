@@ -21,6 +21,24 @@ In order to install openssl development package, issue the following command:
 > sudo pacman -S libssl-dev
 >
 
+## Installation
+In order to install the package so far, you need automake, autoconf, and make.
+At the root of the project,
+
+>
+> aclocal
+>
+> automake --add-missing
+>
+> autoreconf
+>
+> ./configure
+>
+> make && make install
+>
+
+If the last command causes trouble, replace "make install" with "sudo make install" and try again.
+
 ## Executables
 ### aesenc (src/symmetric/aes/aesenc)
 usage: aesenc [options]
