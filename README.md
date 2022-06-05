@@ -21,7 +21,7 @@ In order to install openssl development package, issue the following command:
 > sudo pacman -S libssl-dev
 >
 
-## Installation
+## Compilation and Installation (Linux)
 In order to install the package so far, you need automake, autoconf, and make.
 At the root of the project,
 
@@ -38,6 +38,15 @@ At the root of the project,
 >
 
 If the last command causes trouble, replace "make install" with "sudo make install" and try again.
+
+## Compilation (Windows)
+
+>
+> cd win-port
+> make
+>
+
+This will generate .exe executables in win-port folder. You can choose to copy them to another folder and add that folder to the PATH variable.
 
 ## Executables
 ### aesenc (src/symmetric/aes/aesenc)

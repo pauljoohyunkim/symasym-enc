@@ -6,8 +6,8 @@ all: aesenc.exe symdec.exe symkeygen.exe
 symdec.exe: symdec.o aes.o hash.o bcm.o file.o keygen.o
 	$(CC) $(CFLAGS) symdec.o aes.o hash.o bcm.o file.o keygen.o -lcrypto -o symdec.exe
 
-symdec.o: decryptor/symdec.c decryptor/symdec.h
-	$(CC) $(CFLAGS) decryptor/symdec.c -c
+symdec.o: ../src/decryptor/symdec.c ../src/decryptor/symdec.h
+	$(CC) $(CFLAGS) ../src/decryptor/symdec.c -c
 
 aesenc.exe: aesenc.o bcm.o aes.o hash.o file.o keygen.o
 	$(CC) $(CFLAGS) aesenc.o bcm.o aes.o hash.o file.o keygen.o -lcrypto -o aesenc.exe
@@ -15,26 +15,26 @@ aesenc.exe: aesenc.o bcm.o aes.o hash.o file.o keygen.o
 symkeygen.exe: symkeygen.o hash.o keygen.o
 	$(CC) $(CFLAGS) symkeygen.o hash.o keygen.o -lcrypto -o symkeygen.exe
 
-symkeygen.o: keygen/symkeygen.c keygen/symkeygen.h
-	$(CC) $(CFLAGS) keygen/symkeygen.c -c
+symkeygen.o: ../src/symmetric/keygen/symkeygen.c ../src/symmetric/keygen/symkeygen.h
+	$(CC) $(CFLAGS) ../src/symmetric/keygen/symkeygen.c -c
 
-keygen.o: keygen/keygen.c keygen/keygen.h
-	$(CC) $(CFLAGS) keygen/keygen.c -c
+keygen.o: ../src/symmetric/keygen/keygen.c ../src/symmetric/keygen/keygen.h
+	$(CC) $(CFLAGS) ../src/symmetric/keygen/keygen.c -c
 
-aesenc.o: aes/aesenc.c aes/aesenc.h
-	$(CC) $(CFLAGS) aes/aesenc.c -c
+aesenc.o: ../src/symmetric/aes/aesenc.c ../src/symmetric/aes/aesenc.h
+	$(CC) $(CFLAGS) ../src/symmetric/aes/aesenc.c -c
 
-bcm.o: bcm/bcm.c bcm/bcm.h
-	$(CC) $(CFLAGS) bcm/bcm.c -c
+bcm.o: ../src/symmetric/bcm/bcm.c ../src/symmetric/bcm/bcm.h
+	$(CC) $(CFLAGS) ../src/symmetric/bcm/bcm.c -c
 
-aes.o: aes/aes.c aes/aes.h
-	$(CC) $(CFLAGS) aes/aes.c -c
+aes.o: ../src/symmetric/aes/aes.c ../src/symmetric/aes/aes.h
+	$(CC) $(CFLAGS) ../src/symmetric/aes/aes.c -c
 
-hash.o: misc/hash.c misc/hash.h
-	$(CC) $(CFLAGS) misc/hash.c -c
+hash.o: ../src/misc/hash.c ../src/misc/hash.h
+	$(CC) $(CFLAGS) ../src/misc/hash.c -c
 
-file.o: misc/file.c misc/file.h
-	$(CC) $(CFLAGS) misc/file.c -c
+file.o: ../src/misc/file.c ../src/misc/file.h
+	$(CC) $(CFLAGS) ../src/misc/file.c -c
 
 testgen:
 	head -c 54 /dev/urandom > testinput
