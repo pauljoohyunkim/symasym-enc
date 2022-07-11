@@ -130,7 +130,7 @@ int main(int argc, char** argv)
 	}
 	if(optP)
 	{
-		keygen(MAXKEYLEN, NULL, key);
+		keygen(MAXKEYLEN, NULL, key, false);
 	}
 
 	// Input file opening
