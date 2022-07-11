@@ -9,7 +9,7 @@
 
 
 // Returns 1 if password does not match.
-int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer)
+int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer, bool checktwice)
 {
     // len = HASHLEN * nBlocks + nTrailing
     unsigned int nBlocks = keylen / HASHLEN;
@@ -21,12 +21,15 @@ int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer)
 
     printf("Enter the password (less than 100 characters): ");
     getPassword(password1);
-    printf("Enter the password again: ");
-    getPassword(password2);
-    if(strcmp(password1,password2) != 0)
+    if(checktwice == true)
     {
-        printf("[ERROR] Passwords do not match.\n");
-        return 1;
+        printf("Enter the password again: ");
+        getPassword(password2);
+        if(strcmp(password1,password2) != 0)
+        {
+            printf("[ERROR] Passwords do not match.\n");
+            return 1;
+        }
     }
 
     unsigned int passlen = strlen(password1);

@@ -215,7 +215,7 @@ int main(int argc, char** argv)
 	// Integrated keygen mode
 	if(optP)
 	{
-		keygen(keylen, NULL, key);
+		keygen(keylen, NULL, key, true);
 	}
 
 	// Input file opening
