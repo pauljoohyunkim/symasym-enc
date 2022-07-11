@@ -9,6 +9,6 @@
 #include <stdbool.h>
 
 int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer, bool checkTwice);
-void getPassword(char *password);
+void getPassword(uint8_t *password);
 
 #endif

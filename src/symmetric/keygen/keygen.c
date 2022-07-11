@@ -16,8 +16,10 @@ int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer, bool checktwi
     unsigned int nTrailing = keylen % HASHLEN;
 
     // Password check
-    char password1[SIZE + 1] = { 0 };
-    char password2[SIZE + 1] = { 0 };
+    uint8_t password1[SIZE + 1] = { 0 };
+    //char password1[SIZE + 1] = { 0 };
+    uint8_t password2[SIZE + 1] = { 0 };
+    //char password2[SIZE + 1] = { 0 };
 
     printf("Enter the password (less than 100 characters): ");
     getPassword(password1);
@@ -25,14 +27,14 @@ int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer, bool checktwi
     {
         printf("Enter the password again: ");
         getPassword(password2);
-        if(strcmp(password1,password2) != 0)
+        if(strcmp((char*) password1, (char*) password2) != 0)
         {
             printf("[ERROR] Passwords do not match.\n");
             return 1;
         }
     }
 
-    unsigned int passlen = strlen(password1);
+    unsigned int passlen = strlen((char*) password1);
 
     uint8_t buffer[HASHLEN] = { 0 };
 
@@ -78,7 +80,7 @@ int keygen(unsigned int keylen, FILE* fp, uint8_t* passwordbuffer, bool checktwi
 
 // Silently get password into an array.
 // Source: https://stackoverflow.com/questions/1786532/c-command-line-password-input
-void getPassword(char *password)
+void getPassword(uint8_t *password)
 {
     struct termios oldt, newt;
     int i = 0;
