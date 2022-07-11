@@ -388,8 +388,11 @@ int main(int argc, char** argv)
 	
 
 	free(inputFileName);
-	free(outputFileName);
 
+	if(!optSS)
+	{
+		free(outputFileName);
+	}
 	printf("Finished.\n");
 	return 0;
 }
