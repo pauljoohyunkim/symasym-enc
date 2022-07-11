@@ -28,13 +28,14 @@ int main(int argc, char** argv)
     i: Input File*
     k: Key File*
     o: Output File
+	S: Output to standard output instead (Mutually exclusive with -o option.)
     h: Help
     s: Skip password check (not relevant when password hash is not included.)
     f: Skip file integrity check (not relevant when file integrity hash is not included.)
 
     */
-    bool optI = false, optK = false, optP = false, optO = false, optS = false, optF = false;
-    while((opt = getopt(argc, argv, ":i:k:po:hsf")) != -1)
+    bool optI = false, optK = false, optP = false, optO = false, optSS = false, optS = false, optF = false;
+    while((opt = getopt(argc, argv, ":i:k:po:Shsf")) != -1)
     {
         switch(opt)
         {
@@ -60,6 +61,11 @@ int main(int argc, char** argv)
 				outputFileName = (char*) malloc((strlen(optarg) + 1) * sizeof(char));
 				strcpy(outputFileName, optarg);
 				printf("[INFO] Output file: %s\n", outputFileName);
+				break;
+			
+			case 'S':
+				optSS = true;
+				printf("[INFO] Output to standard output instead.\n");
 				break;
             
 			case 'h':
@@ -100,8 +106,22 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	// If -o not used, use default output file format: <input file> minus the default extension
-	if(!optO)
+	// -o and -S are mutually exclusive.
+	if(optO && optSS)
+	{
+		printf("[ERROR] You are using both -o and -S options at the same time, which is not allowed.\n");
+		return 1;
+	}
+
+	// -S and -f are mutually exclusive.
+	if(optSS && optF)
+	{
+		printf("[ERROR] You are using both -S and -f options at the same time, which is not allowed.\n");
+		return 1;
+	}
+
+	// If -o or -S not used, use default output file format: <input file> minus the default extension
+	if(!optO && !optSS)
 	{
 		outputFileName = (char*) malloc((strlen(inputFileName) + 11) * sizeof(char));
 		strcpy(outputFileName, inputFileName);
@@ -141,12 +161,19 @@ int main(int argc, char** argv)
 	}
 
 	// Output file opening
-	if((outputFile = fopen(outputFileName, "wb")) == NULL)
+	if(!optSS)
 	{
-		printf("[ERROR] Output file could not be opened.\n");
-		
-		fclose(inputFile);		// If it reached this point, currently the inputfile is open.
-		return 1;
+		if((outputFile = fopen(outputFileName, "wb")) == NULL)
+		{
+			printf("[ERROR] Output file could not be opened.\n");
+			
+			fclose(inputFile);		// If it reached this point, currently the inputfile is open.
+			return 1;
+		}
+	}
+	else
+	{
+		outputFile = stdout;
 	}
 
 	
@@ -341,7 +368,7 @@ int main(int argc, char** argv)
 	
 
 	// File integrity check
-	if(!optF)
+	if(!optF && !optSS)
 	{
 		outputFile = fopen(outputFileName,"rb");
 		sha256F(outputFile,keylen,key,file_integrity_computed);
@@ -383,6 +410,7 @@ void showHelp()
 		" Common options:\n"
 		"\n"
 		"\t-o <file>  : specify output file. (default: <input file>.decrypted)\n"
+		"\t-S         : output to standard output. (Mutually exclusive with -o or -f option)\n"
 		"\t-s         : skip password check.\n"
 		"\t-f         : skip file integrity check at the end.\n"
 		"\t-h         : show help.\n"
