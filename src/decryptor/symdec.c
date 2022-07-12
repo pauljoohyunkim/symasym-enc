@@ -218,11 +218,11 @@ int main(int argc, char** argv)
 	uint8_t* iv;
 
 	//c6,c7
-	if(header[3] & 2 != 0)
+	if((header[3] & 2) != 0)
 	{
 		passhash_included = false;
 	}
-	if(header[3] & 1 != 0)
+	if((header[3] & 1) != 0)
 	{
 		file_integrity_included = false;
 	}
